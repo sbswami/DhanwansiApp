@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusableInTouchMode="true"
+    tools:context=".activities.EditActivity">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/sowing_crop_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textAlignment="center"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/title_size" />
+
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="SetPicture"
+                app:srcCompat="@drawable/no_photo_pic" />
+
+            <EditText
+                android:textColor="@color/text_color"
+                android:id="@+id/m_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:ems="10"
+                android:hint="@string/member_name"
+                android:inputType="numberDecimal"
+                android:textSize="@dimen/text_size" />
+
+
+
+
+            <RadioGroup
+                android:id="@+id/m_gender"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/icon_margin">
+
+                <RadioButton
+                    android:id="@+id/m_male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/purush"
+                    android:textSize="@dimen/text_size" />
+
+                <RadioButton
+                    android:id="@+id/m_female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/mahila"
+                    android:textSize="@dimen/text_size" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/sowing_choose_date"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/icon_margin"
+                    android:layout_weight="1"
+                    android:text="@string/jnm_tithi"
+                    android:onClick="ChooseDate"
+                    android:textSize="@dimen/text_size" />
+
+                <TextView
+                    android:id="@+id/show_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/icon_margin"
+                    android:layout_weight="1"
+                    android:text="@string/no_date_selected"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/text_size"/>
+            </LinearLayout>
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:onClick="ChooseEducation"
+                android:ems="10"
+                android:text="@string/sheksnik_yogyta"
+                android:textSize="@dimen/text_size" />
+
+            <TextView
+                android:id="@+id/m_education"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sheksnik_yogyta"
+                android:textAlignment="center"
+                android:onClick="ChooseEducation"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/text_size" />
+
+            <EditText
+                android:textColor="@color/text_color"
+                android:id="@+id/m_mobile_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:ems="10"
+                android:hint="@string/mobile_no_primary"
+                android:inputType="phone"
+                android:textSize="@dimen/text_size" />
+
+            <EditText
+                android:textColor="@color/text_color"
+                android:id="@+id/m_mobile_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:ems="10"
+                android:hint="@string/mobile_no_secondary"
+                android:inputType="phone"
+                android:textSize="@dimen/text_size" />
+
+            <AutoCompleteTextView
+                android:id="@+id/m_cast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:ems="10"
+                android:hint="@string/gotr"
+                android:inputType="textPersonName"
+                android:textSize="@dimen/text_size" />
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:onClick="ChooseWork"
+                android:ems="10"
+                android:text="@string/work"
+                android:textSize="@dimen/text_size" />
+
+            <TextView
+                android:id="@+id/m_work"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/work"
+                android:textAlignment="center"
+                android:onClick="ChooseEducation"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/text_size" />
+
+            <AutoCompleteTextView
+                android:id="@+id/m_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:ems="10"
+                android:hint="@string/rajy"
+                android:inputType="textPersonName"
+                android:textSize="@dimen/text_size" />
+            <AutoCompleteTextView
+                android:id="@+id/m_district"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:ems="10"
+                android:hint="@string/jila"
+                android:inputType="textPersonName"
+                android:textSize="@dimen/text_size" />
+            <AutoCompleteTextView
+                android:id="@+id/m_tahsil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:ems="10"
+                android:hint="@string/tahsil"
+                android:inputType="textPersonName"
+                android:textSize="@dimen/text_size" />
+            <AutoCompleteTextView
+                android:id="@+id/m_village"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:ems="10"
+                android:hint="@string/ganv"
+                android:inputType="textPersonName"
+                android:textSize="@dimen/text_size" />
+
+            <RadioGroup
+                android:id="@+id/m_life"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/icon_margin"
+                android:checkedButton="@id/m_alive">
+
+                <RadioButton
+                    android:id="@+id/m_alive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/prthvi_wasi"
+                    android:textSize="@dimen/text_size" />
+
+                <RadioButton
+                    android:id="@+id/m_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/swargwasi"
+                    android:textSize="@dimen/text_size" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:id="@+id/dead_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <Button
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/icon_margin"
+                    android:layout_weight="1"
+                    android:text="@string/mrn_tithi"
+                    android:onClick="ChooseDateOfDeath"
+                    android:textSize="@dimen/text_size" />
+
+                <TextView
+                    android:id="@+id/show_death_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/icon_margin"
+                    android:layout_weight="1"
+                    android:text="@string/no_date_selected"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/text_size"/>
+            </LinearLayout>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/cardview_margin"
+                app:cardCornerRadius="10sp"
+                app:contentPadding="@dimen/card_view_padding"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <AutoCompleteTextView
+                        android:id="@+id/m_father_village"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/pita_ka_ganv"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+                    <AutoCompleteTextView
+                        android:id="@+id/m_father_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/pita_ka_naam"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+                    <AutoCompleteTextView
+                        android:id="@+id/m_mother_cast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/mata_ki_gotr"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+                    <AutoCompleteTextView
+                        android:id="@+id/m_mother_village"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/mata_ka_ganv"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+                    <AutoCompleteTextView
+                        android:id="@+id/m_mother_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/mata_ka_naam"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/cardview_margin"
+            app:cardCornerRadius="10sp"
+            app:contentPadding="@dimen/card_view_padding"
+            android:layout_gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioGroup
+                android:id="@+id/m_marriage_status"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checkedButton="@id/m_single"
+                android:layout_margin="@dimen/icon_margin">
+
+                <RadioButton
+                    android:id="@+id/m_single"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/unmarried"
+                    android:textSize="@dimen/text_size" />
+
+                <RadioButton
+                    android:id="@+id/m_married"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/married"
+                    android:textSize="@dimen/text_size" />
+
+                <RadioButton
+                    android:id="@+id/m_divorced"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/divorced"
+                    android:textSize="@dimen/text_size" />
+
+                <RadioButton
+                    android:id="@+id/m_widow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/widow"
+                    android:textSize="@dimen/text_size" />
+
+                <RadioButton
+                    android:id="@+id/m_second_married_widow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/second_married"
+                    android:textSize="@dimen/text_size" />
+                <RadioButton
+                    android:id="@+id/m_second_married_divorced"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="@string/married_after_death"
+                    android:textSize="@dimen/text_size" />
+
+            </RadioGroup>
+        </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/m_current_partner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/cardview_margin"
+                app:cardCornerRadius="10sp"
+                app:contentPadding="@dimen/card_view_padding"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/jiwan_sathi_patni"
+                        android:textColor="@color/text_color"
+                        android:gravity="center_horizontal"
+                        android:textSize="@dimen/mini_title_text" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/m_current_partner_cast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/jiwansathi_ka_gotr"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/m_current_partner_village"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/jiwansathi_ka_ganv"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/m_current_partner_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/jiwansathi_ka_naam"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/saadi_ki_tithi"
+                            style="@style/Widget.AppCompat.Button.Colored"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/icon_margin"
+                            android:layout_weight="1"
+                            android:onClick="CurrentMarryDate"
+                            android:text="@string/sadi_tarikh"
+                            android:textSize="@dimen/text_size" />
+
+                        <TextView
+                            android:id="@+id/sadi_ki_tithi_show"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/icon_margin"
+                            android:layout_weight="1"
+                            android:text="@string/no_date_selected"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                    <Button
+                        style="@style/Widget.AppCompat.Button.Colored"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:onClick="AddCurrentPartnerChild"
+                        android:text="@string/beta_beti_jode"
+                        android:textSize="@dimen/text_size" />
+
+                    <ListView
+                        android:id="@+id/m_current_beta_beti_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <Button
+                android:id="@+id/m_past_partner_add"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:onClick="AddPartner"
+                android:text="@string/add_past_jiwansathi"
+                android:textSize="@dimen/text_size" />
+
+            <ListView
+                android:id="@+id/m_past_wife_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!--<CheckBox-->
+                <!--android:id="@+id/sowing_paid_by_partner"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_margin="@dimen/icon_margin"-->
+                <!--android:ems="10"-->
+                <!--android:text="@string/beta_beti"-->
+                <!--android:textSize="@dimen/text_size" />-->
+            <Button
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:onClick="SaveBt"
+                android:text="@string/save"
+                android:textSize="@dimen/text_size" />
+
+            <Button
+                android:id="@+id/sowing_cancel_bt"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:onClick="CancelBt"
+                android:text="@string/cancel"
+                android:textSize="@dimen/text_size" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

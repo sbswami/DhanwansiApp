@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="toolbar_size">70sp</dimen>
+    <dimen name="title_size">24sp</dimen>
+    <dimen name="cardview_margin">10sp</dimen>
+    <dimen name="card_view_padding">5sp</dimen>
+    <dimen name="icon_margin">5sp</dimen>
+    <dimen name="comman_icon_padding">5sp</dimen>
+    <dimen name="comman_icon_name_size">16sp</dimen>
+    <dimen name="stock_list_card_radius">5sp</dimen>
+    <dimen name="stock_list_card_margin">4sp</dimen>
+    <dimen name="home_icon_width">50sp</dimen>
+    <dimen name="home_icon_height">50sp</dimen>
+    <dimen name="bottom_shadow_size">1dp</dimen>
+    <dimen name="right_shadow_size">1dp</dimen>
+    <dimen name="mini_title_text">16sp</dimen>
+    <dimen name="text_size">15sp</dimen>
+    <dimen name="name_title_size">20sp</dimen>
+</resources>

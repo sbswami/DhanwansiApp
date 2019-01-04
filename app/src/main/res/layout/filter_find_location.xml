@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/cardview_margin"
+                app:cardCornerRadius="10sp"
+                app:contentPadding="@dimen/card_view_padding"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/m_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/rajy"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+                    <AutoCompleteTextView
+                        android:id="@+id/m_district"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/jila"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+                    <AutoCompleteTextView
+                        android:id="@+id/m_tahsil"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/tahsil"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+                    <AutoCompleteTextView
+                        android:id="@+id/m_village"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/icon_margin"
+                        android:ems="10"
+                        android:hint="@string/ganv"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/text_size" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/cardview_margin"
+                app:cardCornerRadius="10sp"
+                app:contentPadding="@dimen/card_view_padding"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/filter_gotr"
+                        android:layout_marginStart="@dimen/cardview_margin"
+                        android:layout_marginEnd="@dimen/cardview_margin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/gotr"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/cardview_margin"
+                app:cardCornerRadius="10sp"
+                app:contentPadding="@dimen/card_view_padding"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <AutoCompleteTextView
+                        android:layout_margin="@dimen/cardview_margin"
+                        android:id="@+id/filter_education"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/sheksnik_yogyta"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/cardview_margin"
+                app:cardCornerRadius="10sp"
+                app:contentPadding="@dimen/card_view_padding"
+                android:layout_gravity="center">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/cardview_margin"
+                    android:layout_marginEnd="@dimen/cardview_margin">
+
+                    <EditText
+
+                        android:id="@+id/filter_min_age"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/min_age"
+                        android:inputType="numberDecimal" />
+
+                    <EditText
+
+                        android:id="@+id/filter_max_age"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/max_age"
+                        android:inputType="numberDecimal" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+
+            <Button
+                android:id="@+id/filter_bt"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="FilterFindLocation"
+                android:layout_margin="@dimen/cardview_margin"
+                android:text="@string/prinam"
+                android:textSize="@dimen/text_size"/>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
