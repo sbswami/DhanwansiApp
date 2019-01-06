@@ -19,7 +19,9 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -34,23 +36,27 @@ import com.sanshy.dhanawanshi.SingleItems.SingleChildListItem;
 import com.sanshy.dhanawanshi.SingleItems.SinglePartnerListItem;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EditActivity extends AppCompatActivity {
 
-    public static final String ID = "ID";
-    public static final String NAME = "Name";
-    public static final String VILLAGE = "Village";
-    public static final String CAST = "Cast";
-    public static final String FIRST_RELATION_KEY = "FirstRelationKey";
-    public static final String FIRST_RELATION_VALUE = "FirstRelationValue";
+    public static final String CHILD_ID = "ChildId";
+    public static final String CHILD_NAME = "ChildName";
+    public static final String CHILD_VILLAGE = "ChildVillage";
+    public static final String CHILD_IS_MALE = "ChildIsMale";
+    public static final String PAST_PARTNER_ID = "PastPartnerId";
+    public static final String PAST_PARTNER_NAME = "PastPartnerName";
+    public static final String PAST_PARTNER_CAST = "PastPartnerCast";
+    public static final String PAST_PARTNER_VILLAGE = "PastPartnerVillage";
+    public static final String PAST_PARTNER_MARRIAGE_DATE = "PastPartnerMarriageDate";
     ImageView ProfilePicture;
-    TextView ShowDate,MEducation,MWork,ShowDeathDate,MarryDateShow;
+    TextView ShowBirthDate,MEducation,MWork,ShowDeathDate,MarryDateShow;
     EditText MName,MMobile1,MMobile2;
     AutoCompleteTextView MState,MDistrict,MTahsil,MVillage,MCast,MFatherVillage,MFatherName,MMotherVillage,MMotherCast,MMotherName;
     RadioGroup MGender, MarriageStatus,MLife;
-    RadioButton MMale,MFemale;
+    RadioButton MMale,MFemale,MAlive,MDead;
     RadioButton MSingle,MMarried,MDivorced,MWidow,MMarriedAfterWidow,MMarriedAfterDivorced;
     CardView CurrentPartnerCard;
     LinearLayout DeadContainer;
@@ -84,7 +90,7 @@ public class EditActivity extends AppCompatActivity {
         Mid = intent.getStringExtra(ST.MEMBER_ID);
 
         ProfilePicture = findViewById(R.id.profile_image);
-        ShowDate = findViewById(R.id.show_date);
+        ShowBirthDate = findViewById(R.id.show_date);
         MarryDateShow = findViewById(R.id.sadi_ki_tithi_show);
         ShowDeathDate = findViewById(R.id.show_death_date);
         MName = findViewById(R.id.m_name);
@@ -95,6 +101,8 @@ public class EditActivity extends AppCompatActivity {
         MWork = findViewById(R.id.m_work);
         MState = findViewById(R.id.m_state);
         MDistrict = findViewById(R.id.m_district);
+        MAlive = findViewById(R.id.m_alive);
+        MDead = findViewById(R.id.m_dead);
         MTahsil = findViewById(R.id.m_tahsil);
         MVillage = findViewById(R.id.m_village);
         MCast = findViewById(R.id.m_cast);
@@ -122,6 +130,170 @@ public class EditActivity extends AppCompatActivity {
         MPastPartnerList = findViewById(R.id.m_past_wife_list);
         MCurrentChildList = findViewById(R.id.m_current_beta_beti_list);
 
+        MGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (MName.getText().toString().isEmpty()){
+                    ST.FillAboveInput(EditActivity.this);
+                }
+            }
+        });
+        MMobile1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (EducationStatusSt.isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MMobile1.clearFocus();
+                    }else{
+                        MMobile1.requestFocus();
+                    }
+                }
+            }
+        });
+        MCast.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MName.getText().toString().isEmpty()||MMobile1.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MCast.clearFocus();
+                    }
+                    else{
+                        MCast.requestFocus();
+                    }
+                }
+            }
+        });
+        MState.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (WorkSt.isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MState.clearFocus();
+                    }
+                    else{
+                        MState.requestFocus();
+                    }
+                }
+            }
+        });
+        MDistrict.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MState.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MDistrict.clearFocus();
+                    }
+                    else{
+                        MDistrict.requestFocus();
+                    }
+                }
+            }
+        });
+        MTahsil.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MDistrict.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MTahsil.clearFocus();
+                    }
+                    else{
+                        MTahsil.requestFocus();
+                    }
+                }
+            }
+        });
+        MVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MTahsil.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MVillage.clearFocus();
+                    }
+                    else{
+                        MVillage.requestFocus();
+                    }
+                }
+            }
+        });
+
+        MFatherName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MFatherVillage.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MFatherName.clearFocus();
+                    }
+                    else{
+                        MFatherName.requestFocus();
+                    }
+                }
+            }
+        });
+        MMotherCast.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MFatherName.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MMotherCast.clearFocus();
+                    }
+                    else{
+                        MMotherCast.requestFocus();
+                    }
+                }
+            }
+        });
+        MMotherName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MMotherVillage.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MMotherName.clearFocus();
+                    }
+                    else{
+                        MMotherName.requestFocus();
+                    }
+                }
+            }
+        });
+        MCurrentPartnerCast.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MCast.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MCurrentPartnerCast.clearFocus();
+                    }
+                    else{
+                        MCurrentPartnerCast.requestFocus();
+                    }
+                }
+            }
+        });
+        MCurrentPartnerName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MCurrentPartnerVillage.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MCurrentPartnerName.clearFocus();
+                    }
+                    else{
+                        MCurrentPartnerName.requestFocus();
+                    }
+                }
+            }
+        });
+
+
         PartnerAdapter = new SinglePartnerListAdapter(this,PartnerList);
         MPastPartnerList.setAdapter(PartnerAdapter);
 
@@ -135,11 +307,23 @@ public class EditActivity extends AppCompatActivity {
         MFatherVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
+                if (hasFocus){
+                    if (MVillage.getText().toString().isEmpty()||(MLife.getCheckedRadioButtonId()==R.id.m_dead&&ShowDeathDate.getText().toString().equals(getString(R.string.no_date_selected)))){
+                        ST.FillAboveInput(EditActivity.this);
+                        MFatherVillage.clearFocus();
+                    }
+                    else{
+                        MFatherVillage.requestFocus();
+                    }
+                }
+                else{
+                    if (MVillage.getText().toString().isEmpty()||(MLife.getCheckedRadioButtonId()==R.id.m_dead&&ShowDeathDate.getText().toString().equals(getString(R.string.no_date_selected)))){
+                        return;
+                    }
                     ST.ShowProgress(EditActivity.this);
                     ST.SuggetionList
-                            .whereEqualTo(VILLAGE,MFatherVillage.getText().toString())
-                            .whereEqualTo(CAST,MCast.getText().toString())
+                            .whereEqualTo(ST.VILLAGE,MFatherVillage.getText().toString())
+                            .whereEqualTo(ST.CAST,MCast.getText().toString())
                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -147,12 +331,12 @@ public class EditActivity extends AppCompatActivity {
                             for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
                                 try{
                                     FatherSuggetionList.add(new SuggetionItem(
-                                            documentSnapshot.get(ID).toString(),
-                                            documentSnapshot.get(NAME).toString(),
-                                            documentSnapshot.get(VILLAGE).toString(),
-                                            documentSnapshot.get(CAST).toString(),
-                                            documentSnapshot.get(FIRST_RELATION_KEY).toString(),
-                                            documentSnapshot.get(FIRST_RELATION_VALUE).toString()
+                                            documentSnapshot.get(ST.ID).toString(),
+                                            documentSnapshot.get(ST.NAME).toString(),
+                                            documentSnapshot.get(ST.VILLAGE).toString(),
+                                            documentSnapshot.get(ST.CAST).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_KEY).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString()
                                     ));
                                 }catch (NullPointerException ex){}
                             }
@@ -184,11 +368,23 @@ public class EditActivity extends AppCompatActivity {
         MMotherVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
+                if (hasFocus){
+                    if (MMotherCast.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MMotherVillage.clearFocus();
+                    }
+                    else{
+                        MMotherVillage.requestFocus();
+                    }
+                }
+                else{
+                    if (MMotherCast.getText().toString().isEmpty()){
+                        return;
+                    }
                     ST.ShowProgress(EditActivity.this);
                     ST.SuggetionList
-                            .whereEqualTo(VILLAGE,MMotherVillage.getText().toString())
-                            .whereEqualTo(CAST,MMotherCast.getText().toString())
+                            .whereEqualTo(ST.VILLAGE,MMotherVillage.getText().toString())
+                            .whereEqualTo(ST.CAST,MMotherCast.getText().toString())
                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -196,12 +392,12 @@ public class EditActivity extends AppCompatActivity {
                             for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
                                 try{
                                     MotherSuggetionList.add(new SuggetionItem(
-                                            documentSnapshot.get(ID).toString(),
-                                            documentSnapshot.get(NAME).toString(),
-                                            documentSnapshot.get(VILLAGE).toString(),
-                                            documentSnapshot.get(CAST).toString(),
-                                            documentSnapshot.get(FIRST_RELATION_KEY).toString(),
-                                            documentSnapshot.get(FIRST_RELATION_VALUE).toString()
+                                            documentSnapshot.get(ST.ID).toString(),
+                                            documentSnapshot.get(ST.NAME).toString(),
+                                            documentSnapshot.get(ST.VILLAGE).toString(),
+                                            documentSnapshot.get(ST.CAST).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_KEY).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString()
                                     ));
                                 }catch (NullPointerException ex){}
                             }
@@ -224,11 +420,22 @@ public class EditActivity extends AppCompatActivity {
         MCurrentPartnerVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
+                if (hasFocus){
+                    if (MCurrentPartnerCast.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MCurrentPartnerVillage.clearFocus();
+                    }
+                    else{
+                        MCurrentPartnerVillage.requestFocus();
+                    }
+                }else{
+                    if (MCurrentPartnerCast.getText().toString().isEmpty()){
+                        return;
+                    }
                     ST.ShowProgress(EditActivity.this);
                     ST.SuggetionList
-                            .whereEqualTo(VILLAGE,MCurrentPartnerVillage.getText().toString())
-                            .whereEqualTo(CAST,MCurrentPartnerCast.getText().toString())
+                            .whereEqualTo(ST.VILLAGE,MCurrentPartnerVillage.getText().toString())
+                            .whereEqualTo(ST.CAST,MCurrentPartnerCast.getText().toString())
                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -236,12 +443,12 @@ public class EditActivity extends AppCompatActivity {
                             for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
                                 try{
                                     CurrentPartnerSuggetionList.add(new SuggetionItem(
-                                            documentSnapshot.get(ID).toString(),
-                                            documentSnapshot.get(NAME).toString(),
-                                            documentSnapshot.get(VILLAGE).toString(),
-                                            documentSnapshot.get(CAST).toString(),
-                                            documentSnapshot.get(FIRST_RELATION_KEY).toString(),
-                                            documentSnapshot.get(FIRST_RELATION_VALUE).toString()
+                                            documentSnapshot.get(ST.ID).toString(),
+                                            documentSnapshot.get(ST.NAME).toString(),
+                                            documentSnapshot.get(ST.VILLAGE).toString(),
+                                            documentSnapshot.get(ST.CAST).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_KEY).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString()
                                     ));
                                 }catch (NullPointerException ex){}
                             }
@@ -328,6 +535,11 @@ public class EditActivity extends AppCompatActivity {
         MarriageStatus.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (MMotherName.getText().toString().isEmpty()){
+                    ST.FillAboveInput(EditActivity.this);
+                    MarriageStatus.clearFocus();
+                    return;
+                }
                 switch (checkedId){
                     case R.id.m_single:
                         CurrentPartnerCard.setVisibility(View.GONE);
@@ -382,6 +594,21 @@ public class EditActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        ST.CompleteDataSingle(Mid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    FillPreData(documentSnapshot);
+                }else{
+                    ST.ProblemCause(EditActivity.this);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                ST.ProblemCause(EditActivity.this);
+            }
+        });
         ST.StateList.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -416,6 +643,243 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void FillPreData(DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.contains(ST.PROFILE_PIC)){
+            try{
+                Glide.with(EditActivity.this)
+                        .load((String)documentSnapshot.get(ST.PROFILE_PIC))
+                        .into(ProfilePicture);
+            }catch (Exception e){
+                Toast.makeText(this, getString(R.string.photo_not_there), Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (documentSnapshot.contains(ST.MEMBER_NAME)){
+            MName.setText(documentSnapshot.get(ST.MEMBER_NAME).toString());
+        }
+        if (documentSnapshot.contains(ST.EDUCATION_STATUS)){
+            MEducation.setText(documentSnapshot.get(ST.EDUCATION_STATUS).toString());
+        }
+        if (documentSnapshot.contains(ST.IS_MALE)){
+            if ((boolean) documentSnapshot.get(ST.IS_MALE)){
+                MMale.setChecked(true);
+            }else{
+                MFemale.setChecked(true);
+            }
+        }
+        if (documentSnapshot.contains(ST.DOB)){
+            ShowBirthDate.setText(ST.DateToString((Date) documentSnapshot.get(ST.DOB)));
+            isBirthDate = true;
+        }
+        if (documentSnapshot.contains(ST.IS_ALIVE)){
+            if ((boolean) documentSnapshot.get(ST.IS_ALIVE)){
+                MAlive.setChecked(true);
+            }
+            else{
+                MDead.setChecked(true);
+            }
+        }
+        if (documentSnapshot.contains(ST.DOD)){
+            ShowDeathDate.setText((String)documentSnapshot.get(ST.DOD));
+            isDeathDate = true;
+        }
+        if (documentSnapshot.contains(ST.STATE)){
+            MState.setText((String)documentSnapshot.get(ST.STATE));
+        }
+        if (documentSnapshot.contains(ST.DISTRICT)){
+            MDistrict.setText((String) documentSnapshot.get(ST.DISTRICT));
+        }
+        if (documentSnapshot.contains(ST.TAHSIL)){
+            MTahsil.setText((String) documentSnapshot.get(ST.TAHSIL));
+        }
+        if (documentSnapshot.contains(ST.VILLAGE)){
+            MVillage.setText((String) documentSnapshot.get(ST.VILLAGE));
+        }
+        if (documentSnapshot.contains(ST.PRIMARY_MOBILE_NO)){
+            MMobile1.setText((String) documentSnapshot.get(ST.PRIMARY_MOBILE_NO));
+        }
+        if (documentSnapshot.contains(ST.SECONDARY_MOBILE_NO)){
+            MMobile2.setText((String) documentSnapshot.get(ST.SECONDARY_MOBILE_NO));
+        }
+        if (documentSnapshot.contains(ST.CAST)){
+            MCast.setText((String) documentSnapshot.get(ST.CAST));
+        }
+        if (documentSnapshot.contains(ST.WORK)){
+            ArrayList<String> WorkList = (ArrayList<String>) documentSnapshot.get(ST.WORK);
+
+            String list = "";
+            for (int i = 0; i < WorkList.size(); i++){
+
+                list = list + WorkList.get(i) + ", ";
+
+                MWork.setText(list);
+            }
+        }
+        if (documentSnapshot.contains(ST.FATHER_VILLAGE)){
+            MFatherVillage.setText((String) documentSnapshot.get(ST.FATHER_VILLAGE));
+        }
+        if (documentSnapshot.contains(ST.FATHER_NAME)){
+            MFatherName.setText((String) documentSnapshot.get(ST.FATHER_NAME));
+        }
+        if (documentSnapshot.contains(ST.FATHER_ID)){
+            FatherIdSt = (String) documentSnapshot.get(ST.FATHER_ID);
+        }
+        if (documentSnapshot.contains(ST.MOTHER_VILLAGE)){
+            MMotherVillage.setText((String) documentSnapshot.get(ST.MOTHER_VILLAGE));
+        }
+        if (documentSnapshot.contains(ST.MOTHER_CAST)){
+            MMotherCast.setText((String) documentSnapshot.get(ST.MOTHER_CAST));
+        }
+        if (documentSnapshot.contains(ST.MOTHER_NAME)){
+            MMotherName.setText((String) documentSnapshot.get(ST.MOTHER_NAME));
+        }
+        if (documentSnapshot.contains(ST.MOTHER_ID)){
+            MotherIdSt = (String) documentSnapshot.get(ST.MOTHER_ID);
+        }
+        if (documentSnapshot.contains(ST.IS_SINGLE)){
+            if ((boolean) documentSnapshot.get(ST.IS_SINGLE))
+                MSingle.setChecked(true);
+        }
+        if (documentSnapshot.contains(ST.IS_MARRIED)){
+            if ((boolean) documentSnapshot.get(ST.IS_MARRIED))
+            {
+                MMarried.setChecked(true);
+                CurrentPartnerCard.setVisibility(View.VISIBLE);
+            }
+        }
+        if (documentSnapshot.contains(ST.IS_DIVORCED)){
+            if ((boolean) documentSnapshot.get(ST.IS_DIVORCED))
+            {
+                MDivorced.setChecked(true);
+                PastPartnerAdd.setVisibility(View.VISIBLE);
+                MPastPartnerList.setVisibility(View.VISIBLE);
+            }
+        }
+        if (documentSnapshot.contains(ST.IS_WIDOW)){
+            if ((boolean) documentSnapshot.get(ST.IS_WIDOW))
+            {
+                MWidow.setChecked(true);
+                PastPartnerAdd.setVisibility(View.VISIBLE);
+                MPastPartnerList.setVisibility(View.VISIBLE);
+            }
+        }
+        if (documentSnapshot.contains(ST.IS_MARRIED_AFTER_PARTNER_DEATH)){
+            if ((boolean) documentSnapshot.get(ST.IS_MARRIED_AFTER_PARTNER_DEATH))
+            {
+                MMarriedAfterWidow.setChecked(true);
+                CurrentPartnerCard.setVisibility(View.VISIBLE);
+                PastPartnerAdd.setVisibility(View.VISIBLE);
+                MPastPartnerList.setVisibility(View.VISIBLE);
+            }
+        }
+        if (documentSnapshot.contains(ST.IS_MARRIED_AFTER_DIVORCED_WITH_PARTNER)){
+            if ((boolean) documentSnapshot.get(ST.IS_MARRIED_AFTER_DIVORCED_WITH_PARTNER))
+            {
+                MMarriedAfterDivorced.setChecked(true);
+                CurrentPartnerCard.setVisibility(View.VISIBLE);
+                PastPartnerAdd.setVisibility(View.VISIBLE);
+                MPastPartnerList.setVisibility(View.VISIBLE);
+            }
+        }
+        if (documentSnapshot.contains(ST.CURRENT_PARTNER_VILLAGE)){
+            MCurrentPartnerVillage.setText((String) documentSnapshot.get(ST.CURRENT_PARTNER_VILLAGE));
+        }
+        if (documentSnapshot.contains(ST.CURRENT_PARTNER_CAST)){
+            MCurrentPartnerCast.setText((String) documentSnapshot.get(ST.CURRENT_PARTNER_CAST));
+        }
+        if (documentSnapshot.contains(ST.CURRENT_PARTNER_NAME)){
+            MCurrentPartnerName.setText((String) documentSnapshot.get(ST.CURRENT_PARTNER_NAME));
+        }
+        if (documentSnapshot.contains(ST.CURRENT_PARTNER_MARRIAGE_DATE)){
+            MarryDateShow.setText(ST.DateToString((Date) documentSnapshot.get(ST.CURRENT_PARTNER_MARRIAGE_DATE)));
+            isCurrentMarryDate = true;
+        }
+        if (documentSnapshot.contains(ST.CURRENT_PARTNER_ID)){
+            CurrentPartnerIdSt = (String) documentSnapshot.get(ST.CURRENT_PARTNER_ID);
+        }
+        if (documentSnapshot.contains(ST.CURRENT_PARTNER_CHILD_LIST)){
+            ArrayList<Map<String,Object>> CloudCurrentPartnerChildList = (ArrayList<Map<String, Object>>) documentSnapshot.get(ST.CURRENT_PARTNER_CHILD_LIST);
+
+            ChildList.clear();
+            for (int i = 0; i < CloudCurrentPartnerChildList.size(); i++){
+                SingleChildListItem item = new SingleChildListItem(
+                        (String)CloudCurrentPartnerChildList.get(i).get(CHILD_ID),
+                        (String)CloudCurrentPartnerChildList.get(i).get(CHILD_NAME),
+                        (String)CloudCurrentPartnerChildList.get(i).get(CHILD_VILLAGE),
+                        (boolean)CloudCurrentPartnerChildList.get(i).get(CHILD_IS_MALE)
+                );
+                ChildList.add(item);
+            }
+            ChildAdapter.notifyDataSetChanged();
+            ST.setListViewHeightBasedOnChildren(MCurrentChildList);
+            ChildAdapter.notifyDataSetChanged();
+        }
+        if (documentSnapshot.contains(ST.PAST_PARTNER_LIST)){
+            ArrayList<Map<String, Object>> CloudPastPartnerList = (ArrayList<Map<String, Object>>) documentSnapshot.get(ST.PAST_PARTNER_LIST);
+
+
+
+            PartnerList.clear();
+            for (int i = 0; i < CloudPastPartnerList.size(); i++){
+                ArrayList<SingleChildListItem> PastPartnerChildList = new ArrayList<>();
+                try{
+                    ArrayList<Map<String,Object>> CloudCurrentPartnerChildList = (ArrayList<Map<String, Object>>) CloudPastPartnerList.get(i).get("PastPartnerChildList");
+
+                    for (int j = 0; j < CloudCurrentPartnerChildList.size(); j++){
+                        SingleChildListItem iitem = new SingleChildListItem(
+                                (String) CloudCurrentPartnerChildList.get(j).get(CHILD_ID),
+                                (String) CloudCurrentPartnerChildList.get(j).get(CHILD_NAME),
+                                (String) CloudCurrentPartnerChildList.get(j).get(CHILD_VILLAGE),
+                                (boolean) CloudCurrentPartnerChildList.get(j).get(CHILD_IS_MALE)
+                        );
+                        PastPartnerChildList.add(iitem);
+                    }
+
+                }catch (Exception e){}
+
+                SinglePartnerListItem item = new SinglePartnerListItem(
+                        (String) CloudPastPartnerList.get(i).get(PAST_PARTNER_ID),
+                        (String) CloudPastPartnerList.get(i).get(PAST_PARTNER_NAME),
+                        (String) CloudPastPartnerList.get(i).get(PAST_PARTNER_CAST),
+                        (String) CloudPastPartnerList.get(i).get(PAST_PARTNER_VILLAGE),
+                        (Date) CloudPastPartnerList.get(i).get(PAST_PARTNER_MARRIAGE_DATE),
+                        PastPartnerChildList
+                );
+                PartnerList.add(item);
+            }
+            PartnerAdapter.notifyDataSetChanged();
+            ST.setListViewHeightBasedOnPartner(MPastPartnerList);
+            PartnerAdapter.notifyDataSetChanged();
+
+        }
+        if (documentSnapshot.contains(ST.FIRST_RELATION_KEY)){
+            FirstRelationKey = (String) documentSnapshot.get(ST.FIRST_RELATION_KEY);
+        }
+        if (documentSnapshot.contains(ST.FIRST_RELATION_VALUE)){
+            FirstRelationValue = (String) documentSnapshot.get(ST.FIRST_RELATION_VALUE);
+        }
+        if (documentSnapshot.contains(ST.FIRST_RELATION_ID)){
+            FirstRelationId = (String) documentSnapshot.get(ST.FIRST_RELATION_ID);
+        }
+        if (documentSnapshot.contains(ST.EDITORS_LIST)){
+
+        }
+        if (documentSnapshot.contains(ST.EDITING_KEY)){
+
+        }
+        if (documentSnapshot.contains(ST.LAST_EDITED_BY_UID)){
+
+        }
+        if (documentSnapshot.contains(ST.LAST_EDITED_BY_ID)){
+
+        }
+        if (documentSnapshot.contains(ST.LAST_EDITED_BY_NAME)){
+
+        }
+        if (documentSnapshot.contains(ST.LAST_EDITED_BY_MOBILE_NUMBER)){
+
+        }
     }
 
     private ArrayList<SuggetionItem> populateCustomerData(ArrayList<SuggetionItem> SuggetionList) {
@@ -463,8 +927,13 @@ public class EditActivity extends AppCompatActivity {
         return SuggetionList;
     }
 
-    String EducationStatusSt;
+    String EducationStatusSt = "";
     public void ChooseEducation(View view){
+
+        if (!isBirthDate||MName.getText().toString().isEmpty()|| ShowBirthDate.getText().toString().equals(getString(R.string.no_date_selected))){
+            ST.FillAboveInput(EditActivity.this);
+            return;
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -493,6 +962,10 @@ public class EditActivity extends AppCompatActivity {
 
     ArrayList<String> WorkSt = new ArrayList<>();
     public void ChooseWork(View view){
+        if (MCast.getText().toString().isEmpty()){
+            ST.FillAboveInput(this);
+            return;
+        }
         WorkSt.clear();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -535,13 +1008,21 @@ public class EditActivity extends AppCompatActivity {
     }
 
 
-    boolean isDate = false;
+    boolean isBirthDate = false;
     public void ChooseDate(View view){
-        isDate = ST.ChooseDateDialog(this,ShowDate);
+        if (!(MGender.getCheckedRadioButtonId()==R.id.m_male||MGender.getCheckedRadioButtonId()==R.id.m_female)||MName.getText().toString().isEmpty()){
+            ST.FillAboveInput(EditActivity.this);
+            return;
+        }
+        isBirthDate = ST.ChooseDateDialog(this, ShowBirthDate);
     }
     boolean isCurrentMarryDate = false;
     public void CurrentMarryDate(View view){
-        isCurrentMarryDate = ST.ChooseDateDialog(this,ShowDate);
+        if (MCurrentPartnerName.getText().toString().isEmpty()){
+            ST.FillAboveInput(this);
+            return;
+        }
+        isCurrentMarryDate = ST.ChooseDateDialog(this,MarryDateShow);
     }
 
     boolean isDeathDate = false;
@@ -559,6 +1040,12 @@ public class EditActivity extends AppCompatActivity {
     
     AlertDialog builder;
     public void AddCurrentPartnerChild(View view){
+
+        if (!isCurrentMarryDate||MarryDateShow.getText().toString().isEmpty()){
+            ST.FillAboveInput(this);
+            return;
+        }
+
         int genderId = MGender.getCheckedRadioButtonId();
         switch (genderId){
             case R.id.m_male:
@@ -581,12 +1068,40 @@ public class EditActivity extends AppCompatActivity {
         builder = new AlertDialog.Builder(this).create();
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
-        View childView = inflater.inflate(R.layout.add_child_layout,null);
+        final View childView = inflater.inflate(R.layout.add_child_layout,null);
 
         childName = childView.findViewById(R.id.m_child_name);
         childVillage = childView.findViewById(R.id.m_child_village);
         childGender = childView.findViewById(R.id.m_child_gender);
         AddChild = childView.findViewById(R.id.add_child);
+
+        childName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (childVillage.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        childName.clearFocus();
+                    }
+                    else{
+                        childName.requestFocus();
+                    }
+                }
+            }
+        });
+        childGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (childName.getText().toString().isEmpty()){
+                    ST.FillAboveInput(EditActivity.this);
+                    if (childVillage.getText().toString().isEmpty()){
+                        childVillage.requestFocus();
+                    }else{
+                        childName.requestFocus();
+                    }
+                }
+            }
+        });
 
         childName.setAdapter(ChildSuggetionAdapter);
         childVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -596,8 +1111,8 @@ public class EditActivity extends AppCompatActivity {
                     ST.ShowProgress(EditActivity.this);
                     String ChildCast = isMale?MCast.getText().toString():MCurrentPartnerCast.getText().toString();
                     ST.SuggetionList
-                            .whereEqualTo(VILLAGE,childVillage.getText().toString())
-                            .whereEqualTo(CAST,ChildCast)
+                            .whereEqualTo(ST.VILLAGE,childVillage.getText().toString())
+                            .whereEqualTo(ST.CAST,ChildCast)
                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -605,12 +1120,12 @@ public class EditActivity extends AppCompatActivity {
                             for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
                                 try{
                                     ChildSuggetionList.add(new SuggetionItem(
-                                            documentSnapshot.get(ID).toString(),
-                                            documentSnapshot.get(NAME).toString(),
-                                            documentSnapshot.get(VILLAGE).toString(),
-                                            documentSnapshot.get(CAST).toString(),
-                                            documentSnapshot.get(FIRST_RELATION_KEY).toString(),
-                                            documentSnapshot.get(FIRST_RELATION_VALUE).toString()
+                                            documentSnapshot.get(ST.ID).toString(),
+                                            documentSnapshot.get(ST.NAME).toString(),
+                                            documentSnapshot.get(ST.VILLAGE).toString(),
+                                            documentSnapshot.get(ST.CAST).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_KEY).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString()
                                     ));
                                 }catch (NullPointerException ex){}
                             }
@@ -682,6 +1197,13 @@ public class EditActivity extends AppCompatActivity {
 
     AlertDialog builder2;
     public void AddPartner(View view){
+        if (((MarriageStatus.getCheckedRadioButtonId()==R.id.m_second_married_divorced)
+                ||(MarriageStatus.getCheckedRadioButtonId()==R.id.m_second_married_widow))
+                &&(!isCurrentMarryDate||MarryDateShow.getText().toString().isEmpty())
+                ){
+            ST.FillAboveInput(this);
+            return;
+        }
         isSadiDate = false;
         builder2 = new AlertDialog.Builder(this).create();
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -699,6 +1221,35 @@ public class EditActivity extends AppCompatActivity {
         AddChildPartner = partnerView.findViewById(R.id.add_partner_child);
         AddPartner = partnerView.findViewById(R.id.add_partner);
 
+        PartnerCast.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (PartnerVillage.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        PartnerCast.clearFocus();
+                    }
+                    else {
+                        PartnerCast.requestFocus();
+                    }
+                }
+            }
+        });
+        PartnerName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (PartnerCast.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        PartnerName.clearFocus();
+                    }
+                    else{
+                        PartnerName.requestFocus();
+                    }
+                }
+            }
+        });
+        
         final SingleChildListAdapter PartnerChildAdapter;
         final ArrayList<SingleChildListItem> PartnerChildList = new ArrayList<>();
 
@@ -726,7 +1277,7 @@ public class EditActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (!isSadiDate)
+                if (!isSadiDate||DialogDate.getText().toString().equals(getString(R.string.no_date_selected)))
                     return;
 
                 SinglePartnerListItem item = new SinglePartnerListItem(
@@ -756,6 +1307,10 @@ public class EditActivity extends AppCompatActivity {
         AddChildPartner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isSadiDate||DialogDate.getText().toString().equals(getString(R.string.no_date_selected))){
+                    ST.FillAboveInput(EditActivity.this);
+                    return;
+                }
                 int genderId = MGender.getCheckedRadioButtonId();
                 switch (genderId){
                     case R.id.m_male:
@@ -783,7 +1338,35 @@ public class EditActivity extends AppCompatActivity {
                 childVillage2[0] = childView.findViewById(R.id.m_child_village);
                 childGender2[0] = childView.findViewById(R.id.m_child_gender);
                 AddChild2[0] = childView.findViewById(R.id.add_child);
-
+                
+                childName2[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (hasFocus){
+                            if (childVillage2[0].getText().toString().isEmpty()){
+                                ST.FillAboveInput(EditActivity.this);
+                                childName2[0].clearFocus();
+                            }
+                            else{
+                                childName2[0].requestFocus();
+                            }
+                        }
+                    }
+                });
+                childGender2[0].setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        if (childName2[0].getText().toString().isEmpty()){
+                            ST.FillAboveInput(EditActivity.this);
+                            if (childVillage2[0].getText().toString().isEmpty()){
+                                childVillage2[0].requestFocus();
+                            }else{
+                                childName2[0].requestFocus();
+                            }
+                        }
+                    }
+                });
+                
                 childName2[0].setAdapter(ChildSuggetionAdapter);
                 childVillage2[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
@@ -792,8 +1375,8 @@ public class EditActivity extends AppCompatActivity {
                             ST.ShowProgress(EditActivity.this);
                             String ChildCast = isMale?MCast.getText().toString():MCurrentPartnerCast.getText().toString();
                             ST.SuggetionList
-                                    .whereEqualTo(VILLAGE,childVillage2[0].getText().toString())
-                                    .whereEqualTo(CAST,ChildCast)
+                                    .whereEqualTo(ST.VILLAGE,childVillage2[0].getText().toString())
+                                    .whereEqualTo(ST.CAST,ChildCast)
                                     .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -801,12 +1384,12 @@ public class EditActivity extends AppCompatActivity {
                                     for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
                                         try{
                                             ChildSuggetionList.add(new SuggetionItem(
-                                                    documentSnapshot.get(ID).toString(),
-                                                    documentSnapshot.get(NAME).toString(),
-                                                    documentSnapshot.get(VILLAGE).toString(),
-                                                    documentSnapshot.get(CAST).toString(),
-                                                    documentSnapshot.get(FIRST_RELATION_KEY).toString(),
-                                                    documentSnapshot.get(FIRST_RELATION_VALUE).toString()
+                                                    documentSnapshot.get(ST.ID).toString(),
+                                                    documentSnapshot.get(ST.NAME).toString(),
+                                                    documentSnapshot.get(ST.VILLAGE).toString(),
+                                                    documentSnapshot.get(ST.CAST).toString(),
+                                                    documentSnapshot.get(ST.FIRST_RELATION_KEY).toString(),
+                                                    documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString()
                                             ));
                                         }catch (NullPointerException ex){}
                                     }
@@ -876,6 +1459,10 @@ public class EditActivity extends AppCompatActivity {
 
     boolean isSadiDate = false;
     public void ShadiDate(View view){
+        if (PartnerName.getText().toString().isEmpty()){
+            ST.FillAboveInput(EditActivity.this);
+            return;
+        }
         isSadiDate = ST.ChooseDateDialog(this,DialogDate);
     }
 
@@ -889,7 +1476,7 @@ public class EditActivity extends AppCompatActivity {
     String PhotoURLSt,MemberNameSt,MDistrictSt,MTahsilSt,MVillageSt,PrimaryMobileSt,SecondaryMobileSt;
     String FatherVillageSt,FatherNameSt,FatherIdSt,MotherVilageSt,MotherCastSt,MotherNameSt,MotherIdSt;
     String CurrentPartnerVillageSt,CurrentPartnerNameSt,CurrentPartnerCastSt,CurrentPartnerIdSt;
-    String FirstRelationName,FirstRelationValue,FirstRelationId;
+    String FirstRelationKey,FirstRelationValue,FirstRelationId;
     boolean isAlive = true,isMale,
             isSingle = false,
             isMarried = false,

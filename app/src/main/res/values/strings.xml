@@ -80,5 +80,16 @@
     <string name="mrn_tithi">मरण तिथि</string>
     <string name="please_fill_all_inputs">कृपया सभी इनपुट को भरें|</string>
     <string name="sikayt">शिकायत</string>
+    <string name="above_input">कृपया पहले उपर के सभी इनपुट को भरें !!</string>
+    <string name="contact_us_problem">कोई समस्या है कृपया हमे संपर्क करें!!</string>
+    <string name="photo_not_there">फोटो उपलब्ध नहीं!</string>
+
+    <array name="list_education">
+
+        <item>समय</item>
+        <item>जिंदिगी</item>
+        <item>विकास</item>
+        <item>विनाश</item>
+    </array>
 
 </resources>

@@ -42,11 +42,8 @@
                 android:layout_margin="@dimen/icon_margin"
                 android:ems="10"
                 android:hint="@string/member_name"
-                android:inputType="numberDecimal"
+                android:inputType="textPersonName"
                 android:textSize="@dimen/text_size" />
-
-
-
 
             <RadioGroup
                 android:id="@+id/m_gender"
@@ -109,6 +106,12 @@
                 android:ems="10"
                 android:text="@string/sheksnik_yogyta"
                 android:textSize="@dimen/text_size" />
+
+            <!--<Spinner-->
+                <!--android:id="@+id/spinner"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:entries="@array/list_education" />-->
 
             <TextView
                 android:id="@+id/m_education"
@@ -341,7 +344,6 @@
                 android:id="@+id/m_marriage_status"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:checkedButton="@id/m_single"
                 android:layout_margin="@dimen/icon_margin">
 
                 <RadioButton
@@ -408,6 +410,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/cardview_margin"
                 app:cardCornerRadius="10sp"
+                android:visibility="visible"
                 app:contentPadding="@dimen/card_view_padding"
                 android:layout_gravity="center">
 
@@ -507,10 +510,12 @@
                 android:layout_margin="@dimen/icon_margin"
                 android:onClick="AddPartner"
                 android:text="@string/add_past_jiwansathi"
+                android:visibility="visible"
                 android:textSize="@dimen/text_size" />
 
             <ListView
                 android:id="@+id/m_past_wife_list"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

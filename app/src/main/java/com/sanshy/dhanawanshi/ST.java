@@ -41,6 +41,52 @@ public class ST {
     public static final String NOTIFICATIONS = "Notifications";
     public static final String DONATIONS = "Donations";
     public static final String SAVED_LIST = "SavedList";
+    public static final String EDUCATION_STATUS = "EducationStatus";
+    public static final String IS_MALE = "isMale";
+    public static final String ID = "ID";
+    public static final String NAME = "Name";
+    public static final String VILLAGE = "Village";
+    public static final String CAST = "Cast";
+    public static final String FIRST_RELATION_KEY = "FirstRelationKey";
+    public static final String FIRST_RELATION_VALUE = "FirstRelationValue";
+    public static final String PROFILE_PIC = "ProfilePic";
+    public static final String CURRENT_PARTNER_CHILD_LIST = "CurrentPartnerChildList";
+    public static final String FIRST_RELATION_ID = "FirstRelationId";
+    public static final String MEMBER_NAME = "MemberName";
+    public static final String DOB = "DOB";
+    public static final String IS_ALIVE = "isAlive";
+    public static final String DOD = "DOD";
+    public static final String STATE = "State";
+    public static final String DISTRICT = "District";
+    public static final String TAHSIL = "Tahsil";
+    public static final String PRIMARY_MOBILE_NO = "PrimaryMobileNo";
+    public static final String SECONDARY_MOBILE_NO = "SecondaryMobileNo";
+    public static final String WORK = "Work";
+    public static final String FATHER_VILLAGE = "FatherVillage";
+    public static final String FATHER_NAME = "FatherName";
+    public static final String FATHER_ID = "FatherId";
+    public static final String MOTHER_VILLAGE = "MotherVillage";
+    public static final String MOTHER_CAST = "MotherCast";
+    public static final String MOTHER_NAME = "MotherName";
+    public static final String MOTHER_ID = "MotherId";
+    public static final String IS_SINGLE = "isSingle";
+    public static final String IS_MARRIED = "isMarried";
+    public static final String IS_DIVORCED = "isDivorced";
+    public static final String IS_WIDOW = "isWidow";
+    public static final String IS_MARRIED_AFTER_PARTNER_DEATH = "isMarriedAfterPartnerDeath";
+    public static final String IS_MARRIED_AFTER_DIVORCED_WITH_PARTNER = "isMarriedAfterDivorcedWithPartner";
+    public static final String CURRENT_PARTNER_VILLAGE = "CurrentPartnerVillage";
+    public static final String CURRENT_PARTNER_CAST = "CurrentPartnerCast";
+    public static final String CURRENT_PARTNER_NAME = "CurrentPartnerName";
+    public static final String CURRENT_PARTNER_MARRIAGE_DATE = "CurrentPartnerMarriageDate";
+    public static final String CURRENT_PARTNER_ID = "CurrentPartnerId";
+    public static final String PAST_PARTNER_LIST = "PastPartnerList";
+    public static final String EDITORS_LIST = "EditorsList";
+    public static final String EDITING_KEY = "EditingKey";
+    public static final String LAST_EDITED_BY_UID = "LastEditedByUid";
+    public static final String LAST_EDITED_BY_ID = "LastEditedById";
+    public static final String LAST_EDITED_BY_NAME = "LastEditedByName";
+    public static final String LAST_EDITED_BY_MOBILE_NUMBER = "LastEditedByMobileNumber";
 
     public static FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     public static String mUid = ST.currentUser!=null?ST.currentUser.getUid():null;
@@ -153,6 +199,7 @@ public class ST {
     public static void ShowProgress(Context context){
         mProgress = new ProgressDialog(context);
         mProgress.setMessage(context.getString(R.string.loading));
+        mProgress.setCancelable(false);
         mProgress.show();
     }
     public static void HideProgress(){
@@ -215,5 +262,9 @@ public class ST {
     }
     public static void FillInput(Context context){
         ST.ShowDialog(context,context.getString(R.string.please_fill_all_inputs));
+    }public static void FillAboveInput(Context context){
+        ST.ShowDialog(context,context.getString(R.string.above_input));
+    }public static void ProblemCause(Context context){
+        ST.ShowDialog(context,context.getString(R.string.contact_us_problem));
     }
 }
