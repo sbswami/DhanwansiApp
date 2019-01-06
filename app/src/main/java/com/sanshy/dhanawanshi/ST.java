@@ -147,6 +147,7 @@ public class ST {
     public static int fmonth = 0;
     public static int fYear = 0;
     public static Date staticDate = new Date();
+    public static Date marryDate = new Date();
     public static Date birthDate = new Date();
     public static Date deathDate = new Date();
 
@@ -184,6 +185,49 @@ public class ST {
 
                         dateShow.setText(fday+"/"+fmonth+"/"+fYear);
                         staticDate = chosenDate;
+
+                    }
+                }, mYear, mMonth, mDay);
+
+
+        datePickerDialog.show();
+
+        return true;
+    }
+    public static boolean CurrentPartnerMarriageDate(final Context context, final TextView dateShow){
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        fday = dayOfMonth;
+                        fmonth = monthOfYear;
+                        fYear = year;
+
+                        Date currentDate = new Date();
+                        SimpleDateFormat cHour = new SimpleDateFormat("hh");
+                        int hour = Integer.parseInt(cHour.format(currentDate));
+
+                        SimpleDateFormat cMin = new SimpleDateFormat("mm");
+                        int min = Integer.parseInt(cMin.format(currentDate));
+
+                        SimpleDateFormat cSecond = new SimpleDateFormat("ss");
+                        int sec = Integer.parseInt(cSecond.format(currentDate));
+
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTimeInMillis(0);
+                        cal.set(fYear,fmonth++, fday, 0, 0, 0);
+                        Date chosenDate = cal.getTime();
+
+                        dateShow.setText(fday+"/"+fmonth+"/"+fYear);
+                        marryDate = chosenDate;
 
                     }
                 }, mYear, mMonth, mDay);
