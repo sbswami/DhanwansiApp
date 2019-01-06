@@ -86,6 +86,7 @@ public class ST {
     public static final String LAST_EDITED_BY_UID = "LastEditedByUid";
     public static final String LAST_EDITED_BY_ID = "LastEditedById";
     public static final String LAST_EDITED_BY_NAME = "LastEditedByName";
+    public static final String SELF_INFO = "SelfInfo";
     public static final String LAST_EDITED_BY_MOBILE_NUMBER = "LastEditedByMobileNumber";
 
     public static FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -96,10 +97,11 @@ public class ST {
     public static CollectionReference SuggetionList = db.collection(SUGGETIONS);
     public static CollectionReference SearchDataList = db.collection(SEARCH_DATA_LIST);
     public static CollectionReference CompleteDataList = db.collection(COMPLETE_DATA_LIST);
-    public static CollectionReference MyMembersList = db.collection(MY_MEMBER_LIST);
-    public static CollectionReference SavedList = db.collection(SAVED_LIST);
+    public static CollectionReference MyMembersList = db.collection(ST.mUid).document(MY_MEMBER_LIST).collection(MY_MEMBER_LIST);
+    public static CollectionReference SavedList = db.collection(ST.mUid).document(SAVED_LIST).collection(SAVED_LIST);
     public static CollectionReference NotificationList = db.collection(NOTIFICATIONS);
     public static CollectionReference DonationList = db.collection(DONATIONS);
+    public static DocumentReference SelfInfo = db.collection(ST.mUid).document(SELF_INFO);
 
     public static DocumentReference SuggetionSingle(String id){
         return SuggetionList.document(id);

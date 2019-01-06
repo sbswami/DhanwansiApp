@@ -1783,8 +1783,95 @@ public class EditActivity extends AppCompatActivity {
         MemberCompleteDataMap.put(ST.LAST_EDITED_BY_UID,ST.mUid);
 //        MemberCompleteDataMap.put(ST.LAST_EDITED_BY_NAME,);
         MemberCompleteDataMap.put(ST.LAST_EDITED_BY_MOBILE_NUMBER,Objects.requireNonNull(ST.currentUser.getPhoneNumber()));
-
+/*
+All Data
+ */
         ST.CompleteDataSingle(Mid).update(MemberCompleteDataMap);
+/*
+SearchData
+ */
+
+        Map<String,Object> SearchMap = new HashMap<>();
+
+        SearchMap.put(ST.MEMBER_ID,Mid);
+        SearchMap.put(ST.MEMBER_NAME,MemberNameSt);
+        SearchMap.put(ST.FATHER_NAME,FatherNameSt);
+        SearchMap.put(ST.CAST,MCastSt);
+        SearchMap.put(ST.VILLAGE,MVillageSt);
+        SearchMap.put(ST.TAHSIL,MTahsilSt);
+        SearchMap.put(ST.DISTRICT,MDistrictSt);
+        SearchMap.put(ST.STATE,MStateSt);
+        SearchMap.put(ST.EDUCATION_STATUS,EducationStatusSt);
+        SearchMap.put(ST.WORK,WorkSt);
+        SearchMap.put(ST.DOB,ST.birthDate);
+
+        ST.SearchDataSingle(Mid).update(SearchMap);
+
+        ST.MyMemberSingle(Mid).update(SearchMap);
+
+        Map<String,Object> SuggationMap = new HashMap<>();
+        SuggationMap.put(ST.MEMBER_ID,Mid);
+        SuggationMap.put(ST.MEMBER_NAME,MemberNameSt);
+        SuggationMap.put(ST.VILLAGE,MVillageSt);
+        SuggationMap.put(ST.CAST,MCastSt);
+        ST.SuggetionSingle(Mid).update(SuggationMap);
+
+
+        ST.CompleteDataSingle(FatherIdSt).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+
+                }
+                else{
+                    Map<String, Object> DataMap = new HashMap<>();
+
+                    DataMap.put(ST.MEMBER_ID,FatherIdSt);
+                    DataMap.put(ST.MEMBER_NAME,FatherNameSt);
+                    DataMap.put(ST.CAST,MCastSt);
+                    DataMap.put(ST.VILLAGE,FatherVillageSt);
+                    DataMap.put(ST.IS_MALE,true);
+                    DataMap.put(ST.IS_SINGLE,false);
+                    DataMap.put(ST.IS_MARRIED,true);
+                    DataMap.put(ST.IS_DIVORCED,false);
+                    DataMap.put(ST.IS_WIDOW,false);
+                    DataMap.put(ST.IS_MARRIED_AFTER_DIVORCED_WITH_PARTNER,false);
+                    DataMap.put(ST.IS_MARRIED_AFTER_PARTNER_DEATH,false);
+                    DataMap.put(ST.CURRENT_PARTNER_ID,MotherIdSt);
+                    DataMap.put(ST.CURRENT_PARTNER_NAME,MotherNameSt);
+                    DataMap.put(ST.CURRENT_PARTNER_VILLAGE,MotherVilageSt);
+                    DataMap.put(ST.CURRENT_PARTNER_CAST,MotherCastSt);
+                    ArrayList<SingleChildListItem> ChildListParents = new ArrayList<>();
+                    SingleChildListItem item = new SingleChildListItem(
+                            Mid,
+                            MemberNameSt,
+                            MVillageSt,
+                            isMale
+                    );
+                    ChildListParents.add(item);
+                    DataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildListParents);
+                    DataMap.put(ST.FIRST_RELATION_ID,Mid);
+                    DataMap.put(ST.FIRST_RELATION_KEY,getString(R.string.bche_ka_naam));
+                    DataMap.put(ST.FIRST_RELATION_VALUE,MemberNameSt);
+                    DataMap.put(ST.LAST_EDITED_BY_MOBILE_NUMBER,Objects.requireNonNull(ST.currentUser.getPhoneNumber()));
+                    DataMap.put(ST.LAST_EDITED_BY_UID,ST.mUid);
+
+                    ArrayList<String> EditorKey = new ArrayList<>();
+                    EditorKey.add(ST.mUid);
+                    DataMap.put(ST.EDITORS_LIST,EditorKey);
+
+                    ST.CompleteDataSingle(FatherIdSt).set(DataMap);
+                    Map<String, Object> SearchData = new HashMap<>();
+
+                    SearchData.put(ST.MEMBER_ID,FatherIdSt);
+                    SearchData.put(ST.MEMBER_NAME,FatherNameSt);
+                    SearchData.put(ST.CAST,MCastSt);
+                    SearchData.put(ST.VILLAGE,FatherVillageSt);
+
+
+                }
+            }
+        });
 
 
 
