@@ -90,7 +90,6 @@ public class ST {
 
     public static FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     public static String mUid = ST.currentUser!=null?ST.currentUser.getUid():null;
-
     public static FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static CollectionReference LocRef = db.collection(LOCATIONS);
     public static CollectionReference CastRef = db.collection(CASTS);
@@ -131,7 +130,7 @@ public class ST {
     public static DocumentReference Villages = LocRef.document(VILLAGES);
     public static DocumentReference StateList = LocRef.document(STATES);
 
-    public static DocumentReference DistricList(String StateSt){
+    public static DocumentReference DistrictList(String StateSt){
         return LocRef.document(STATES).collection(StateSt).document(DISTRICTS);
     }
     public static DocumentReference TahsilList(String StateSt,String DistrictSt){
@@ -146,6 +145,9 @@ public class ST {
     public static int fmonth = 0;
     public static int fYear = 0;
     public static Date staticDate = new Date();
+    public static Date birthDate = new Date();
+    public static Date deathDate = new Date();
+
     public static boolean ChooseDateDialog(final Context context, final TextView dateShow){
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
@@ -188,6 +190,96 @@ public class ST {
         datePickerDialog.show();
 
         return true;
+    }
+    public static boolean BirthDateDialog(final Context context, final TextView dateShow){
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        fday = dayOfMonth;
+                        fmonth = monthOfYear;
+                        fYear = year;
+
+                        Date currentDate = new Date();
+                        SimpleDateFormat cHour = new SimpleDateFormat("hh");
+                        int hour = Integer.parseInt(cHour.format(currentDate));
+
+                        SimpleDateFormat cMin = new SimpleDateFormat("mm");
+                        int min = Integer.parseInt(cMin.format(currentDate));
+
+                        SimpleDateFormat cSecond = new SimpleDateFormat("ss");
+                        int sec = Integer.parseInt(cSecond.format(currentDate));
+
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTimeInMillis(0);
+                        cal.set(fYear,fmonth++, fday, 0, 0, 0);
+                        Date chosenDate = cal.getTime();
+
+                        dateShow.setText(fday+"/"+fmonth+"/"+fYear);
+                        birthDate = chosenDate;
+
+                    }
+                }, mYear, mMonth, mDay);
+
+
+        datePickerDialog.show();
+
+        return true;
+    }
+    public static boolean DeathDateDialog(final Context context, final TextView dateShow){
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        fday = dayOfMonth;
+                        fmonth = monthOfYear;
+                        fYear = year;
+
+                        Date currentDate = new Date();
+                        SimpleDateFormat cHour = new SimpleDateFormat("hh");
+                        int hour = Integer.parseInt(cHour.format(currentDate));
+
+                        SimpleDateFormat cMin = new SimpleDateFormat("mm");
+                        int min = Integer.parseInt(cMin.format(currentDate));
+
+                        SimpleDateFormat cSecond = new SimpleDateFormat("ss");
+                        int sec = Integer.parseInt(cSecond.format(currentDate));
+
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTimeInMillis(0);
+                        cal.set(fYear,fmonth++, fday, 0, 0, 0);
+                        Date chosenDate = cal.getTime();
+
+                        dateShow.setText(fday+"/"+fmonth+"/"+fYear);
+                        deathDate = chosenDate;
+
+                    }
+                }, mYear, mMonth, mDay);
+
+
+        datePickerDialog.show();
+
+        return true;
+    }
+
+    public static String GenerateId(Date date, String Name, String Village){
+        return date.getTime()+"_"+mUid+"_"+Name+"_"+Village;
     }
 
     public static String DateToString(Date date){

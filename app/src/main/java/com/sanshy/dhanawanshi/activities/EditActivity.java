@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -73,12 +74,15 @@ public class EditActivity extends AppCompatActivity {
     SingleChildListAdapter ChildAdapter;
     ArrayList<SingleChildListItem> ChildList = new ArrayList<>();
 
-    SuggestionAdapter FatherSuggetionAdapter,MotherSuggetionAdapter,CurrentPartnerSuggetionAdapter,ChildSuggetionAdapter;
+    SuggestionAdapter FatherSuggetionAdapter,MotherSuggetionAdapter,CurrentPartnerSuggetionAdapter,ChildSuggetionAdapter,PartnerSuggetionAdapter;
     ArrayList<SuggetionItem> FatherSuggetionList = new ArrayList<>();
+    boolean isFatherSuggested = false;
     ArrayList<SuggetionItem> MotherSuggetionList = new ArrayList<>();
+    boolean isMotherSuggested = false;
     ArrayList<SuggetionItem> ChildSuggetionList = new ArrayList<>();
+    boolean isCurrentPartnerSuggested = false;
     ArrayList<SuggetionItem> CurrentPartnerSuggetionList = new ArrayList<>();
-
+    ArrayList<SuggetionItem> PartnerSuggetionList = new ArrayList<>();
     String Mid;
 
     @Override
@@ -304,6 +308,28 @@ public class EditActivity extends AppCompatActivity {
         
         FatherSuggetionAdapter = new SuggestionAdapter(EditActivity.this,FatherSuggetionList);
         MFatherName.setAdapter(FatherSuggetionAdapter);
+
+        MFatherName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FatherIdSt = FatherSuggetionList.get(position).getId();
+                isFatherSuggested = true;
+            }
+        });
+        MMotherName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MotherIdSt = MotherSuggetionList.get(position).getId();
+                isMotherSuggested = true;
+            }
+        });
+        MCurrentPartnerName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                CurrentPartnerIdSt = CurrentPartnerSuggetionList.get(position).getId();
+                isCurrentPartnerSuggested = true;
+            }
+        });
         MFatherVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -365,6 +391,7 @@ public class EditActivity extends AppCompatActivity {
         });
         MotherSuggetionAdapter = new SuggestionAdapter(EditActivity.this,MotherSuggetionList);
         MMotherName.setAdapter(MotherSuggetionAdapter);
+        PartnerSuggetionAdapter = new SuggestionAdapter(EditActivity.this,PartnerSuggetionList);
         MMotherVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -486,7 +513,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ST.ShowProgress(EditActivity.this);
-                ST.DistricList(MState.getText().toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                ST.DistrictList(MState.getText().toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         ST.HideProgress();
@@ -724,6 +751,7 @@ public class EditActivity extends AppCompatActivity {
         }
         if (documentSnapshot.contains(ST.FATHER_ID)){
             FatherIdSt = (String) documentSnapshot.get(ST.FATHER_ID);
+            isFatherSuggested = true;
         }
         if (documentSnapshot.contains(ST.MOTHER_VILLAGE)){
             MMotherVillage.setText((String) documentSnapshot.get(ST.MOTHER_VILLAGE));
@@ -736,6 +764,7 @@ public class EditActivity extends AppCompatActivity {
         }
         if (documentSnapshot.contains(ST.MOTHER_ID)){
             MotherIdSt = (String) documentSnapshot.get(ST.MOTHER_ID);
+            isMotherSuggested = true;
         }
         if (documentSnapshot.contains(ST.IS_SINGLE)){
             if ((boolean) documentSnapshot.get(ST.IS_SINGLE))
@@ -797,6 +826,7 @@ public class EditActivity extends AppCompatActivity {
         }
         if (documentSnapshot.contains(ST.CURRENT_PARTNER_ID)){
             CurrentPartnerIdSt = (String) documentSnapshot.get(ST.CURRENT_PARTNER_ID);
+            isCurrentPartnerSuggested = true;
         }
         if (documentSnapshot.contains(ST.CURRENT_PARTNER_CHILD_LIST)){
             ArrayList<Map<String,Object>> CloudCurrentPartnerChildList = (ArrayList<Map<String, Object>>) documentSnapshot.get(ST.CURRENT_PARTNER_CHILD_LIST);
@@ -863,7 +893,10 @@ public class EditActivity extends AppCompatActivity {
             FirstRelationId = (String) documentSnapshot.get(ST.FIRST_RELATION_ID);
         }
         if (documentSnapshot.contains(ST.EDITORS_LIST)){
-
+            ArrayList<String> editorList = (ArrayList<String>) documentSnapshot.get(ST.EDITORS_LIST);
+            if (!editorList.contains(ST.mUid)){
+                EditorsList.add(ST.mUid);
+            }
         }
         if (documentSnapshot.contains(ST.EDITING_KEY)){
 
@@ -881,6 +914,8 @@ public class EditActivity extends AppCompatActivity {
 
         }
     }
+
+    ArrayList<String> EditorsList = new ArrayList<>();
 
     private ArrayList<SuggetionItem> populateCustomerData(ArrayList<SuggetionItem> SuggetionList) {
         SuggetionList.add(new SuggetionItem(
@@ -1014,7 +1049,7 @@ public class EditActivity extends AppCompatActivity {
             ST.FillAboveInput(EditActivity.this);
             return;
         }
-        isBirthDate = ST.ChooseDateDialog(this, ShowBirthDate);
+        isBirthDate = ST.BirthDateDialog(this, ShowBirthDate);
     }
     boolean isCurrentMarryDate = false;
     public void CurrentMarryDate(View view){
@@ -1027,7 +1062,7 @@ public class EditActivity extends AppCompatActivity {
 
     boolean isDeathDate = false;
     public void ChooseDateOfDeath(View view){
-        isDeathDate = ST.ChooseDateDialog(this, ShowDeathDate);
+        isDeathDate = ST.DeathDateDialog(this, ShowDeathDate);
     }
 
 
@@ -1035,11 +1070,16 @@ public class EditActivity extends AppCompatActivity {
     RadioGroup childGender;
     Button AddChild;
 
-    String ChildNameSt,ChildVillageSt,ChildGenderSt;
-
+    String ChildNameSt,ChildVillageSt,ChildGenderSt,ChildIdSt;
+    boolean isChildSuggested = false;
     
     AlertDialog builder;
     public void AddCurrentPartnerChild(View view){
+
+        isChildSuggested = false;
+        ChildIdSt = "";
+        ChildNameSt = "";
+        ChildVillageSt = "";
 
         if (!isCurrentMarryDate||MarryDateShow.getText().toString().isEmpty()){
             ST.FillAboveInput(this);
@@ -1104,6 +1144,13 @@ public class EditActivity extends AppCompatActivity {
         });
 
         childName.setAdapter(ChildSuggetionAdapter);
+        childName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                isChildSuggested = true;
+                ChildIdSt = ChildSuggetionList.get(position).getId();
+            }
+        });
         childVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -1158,6 +1205,9 @@ public class EditActivity extends AppCompatActivity {
                     ST.FillInput(EditActivity.this);
                     return;
                 }
+                if (ChildIdSt.isEmpty()||isChildSuggested){
+                    ChildIdSt = ST.GenerateId(new Date(),ChildNameSt,ChildVillageSt);
+                }
                 boolean isMale;
                 switch (childGender.getCheckedRadioButtonId()){
                     case R.id.m_child_male:
@@ -1173,7 +1223,7 @@ public class EditActivity extends AppCompatActivity {
                         return;
 
                 }
-                SingleChildListItem item = new SingleChildListItem("AAA",ChildNameSt,ChildVillageSt,isMale);
+                SingleChildListItem item = new SingleChildListItem(ChildIdSt,ChildNameSt,ChildVillageSt,isMale);
                 ChildList.add(item);
                 ST.setListViewHeightBasedOnChildren(MCurrentChildList);
                 ChildAdapter.notifyDataSetChanged();
@@ -1192,11 +1242,19 @@ public class EditActivity extends AppCompatActivity {
     TextView DialogDate;
     ListView ChildListInPartner;
 
+    String PartnerVillageSt,PartnerCastSt,PartnerNameSt,PartnerIdSt;
+    boolean isPartnerSuggested = false;
 
     Button AddChildPartner,AddPartner;
 
     AlertDialog builder2;
     public void AddPartner(View view){
+        isPartnerSuggested = false;
+        PartnerIdSt = "";
+        PartnerNameSt = "";
+        PartnerVillageSt = "";
+        PartnerCastSt = "";
+
         if (((MarriageStatus.getCheckedRadioButtonId()==R.id.m_second_married_divorced)
                 ||(MarriageStatus.getCheckedRadioButtonId()==R.id.m_second_married_widow))
                 &&(!isCurrentMarryDate||MarryDateShow.getText().toString().isEmpty())
@@ -1253,6 +1311,55 @@ public class EditActivity extends AppCompatActivity {
         final SingleChildListAdapter PartnerChildAdapter;
         final ArrayList<SingleChildListItem> PartnerChildList = new ArrayList<>();
 
+        PartnerName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                PartnerIdSt = PartnerSuggetionList.get(position).getId();
+                isPartnerSuggested = true;
+            }
+        });
+
+        PartnerVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus){
+                    ST.ShowProgress(EditActivity.this);
+                    String ChildCast = PartnerCast.getText().toString();
+                    ST.SuggetionList
+                            .whereEqualTo(ST.VILLAGE,PartnerVillage.getText().toString())
+                            .whereEqualTo(ST.CAST,ChildCast)
+                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            PartnerSuggetionList.clear();
+                            for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
+                                try{
+                                    PartnerSuggetionList.add(new SuggetionItem(
+                                            documentSnapshot.get(ST.ID).toString(),
+                                            documentSnapshot.get(ST.NAME).toString(),
+                                            documentSnapshot.get(ST.VILLAGE).toString(),
+                                            documentSnapshot.get(ST.CAST).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_KEY).toString(),
+                                            documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString()
+                                    ));
+                                }catch (NullPointerException ex){}
+                            }
+                            PartnerSuggetionAdapter = new SuggestionAdapter(EditActivity.this,PartnerSuggetionList);
+                            PartnerName.setAdapter(PartnerSuggetionAdapter);
+                            PartnerSuggetionAdapter.notifyDataSetChanged();
+
+                            ST.HideProgress();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            ST.ShowDialog(EditActivity.this,e.toString());
+                            ST.HideProgress();
+                        }
+                    });
+                }
+            }
+        });
 
         PartnerChildAdapter = new SingleChildListAdapter(this,PartnerChildList);
         ChildListInPartner.setAdapter(PartnerChildAdapter);
@@ -1280,6 +1387,9 @@ public class EditActivity extends AppCompatActivity {
                 if (!isSadiDate||DialogDate.getText().toString().equals(getString(R.string.no_date_selected)))
                     return;
 
+                if (PartnerIdSt.isEmpty()){
+                    PartnerIdSt = ST.GenerateId(new Date(),PartnerNameSt,PartnerVillageSt);
+                }
                 SinglePartnerListItem item = new SinglePartnerListItem(
                         "aaa",
                         PartnerNameSt,
@@ -1307,6 +1417,11 @@ public class EditActivity extends AppCompatActivity {
         AddChildPartner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ChildIdSt = "";
+                ChildNameSt = "";
+                ChildVillageSt = "";
+                isChildSuggested = false;
+
                 if (!isSadiDate||DialogDate.getText().toString().equals(getString(R.string.no_date_selected))){
                     ST.FillAboveInput(EditActivity.this);
                     return;
@@ -1366,7 +1481,15 @@ public class EditActivity extends AppCompatActivity {
                         }
                     }
                 });
-                
+
+                childName2[0].setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        ChildIdSt = ChildSuggetionList.get(position).getId();
+                        isChildSuggested = true;
+                    }
+                });
+
                 childName2[0].setAdapter(ChildSuggetionAdapter);
                 childVillage2[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
@@ -1422,6 +1545,9 @@ public class EditActivity extends AppCompatActivity {
                             ST.FillInput(EditActivity.this);
                             return;
                         }
+                        if (ChildIdSt.isEmpty()){
+                            ChildIdSt = ST.GenerateId(new Date(),ChildNameSt,ChildVillageSt);
+                        }
                         boolean isMale;
                         switch (childGender2[0].getCheckedRadioButtonId()){
                             case R.id.m_child_male:
@@ -1438,7 +1564,7 @@ public class EditActivity extends AppCompatActivity {
 
 
                         }
-                        SingleChildListItem item = new SingleChildListItem("AAA",ChildNameSt,ChildVillageSt,isMale);
+                        SingleChildListItem item = new SingleChildListItem(ChildIdSt,ChildNameSt,ChildVillageSt,isMale);
                         PartnerChildList.add(item);
                         ST.setListViewHeightBasedOnChildren(ChildListInPartner);
                         PartnerChildAdapter.notifyDataSetChanged();
@@ -1466,7 +1592,6 @@ public class EditActivity extends AppCompatActivity {
         isSadiDate = ST.ChooseDateDialog(this,DialogDate);
     }
 
-    String PartnerVillageSt,PartnerCastSt,PartnerNameSt;
 
     //Upload Data
 
@@ -1557,17 +1682,112 @@ public class EditActivity extends AppCompatActivity {
             default:
         }
 
+        if (FatherIdSt.isEmpty()||(!isFatherSuggested)){
+            FatherIdSt = ST.GenerateId(new Date(),FatherNameSt,FatherVillageSt);
+        }
+        if (MotherIdSt.isEmpty()||(!isMotherSuggested)){
+            MotherIdSt = ST.GenerateId(new Date(),MotherNameSt,MotherVilageSt);
+        }
+        if ((isMarriedAfterDivorcedWithPartner||isMarried||isMarriedAfterPartnerDeath)&&CurrentPartnerIdSt.isEmpty()||isCurrentPartnerSuggested){
+            CurrentPartnerIdSt = ST.GenerateId(new Date(),CurrentPartnerNameSt,CurrentPartnerVillageSt);
+        }
+
         if (!StateList.contains(MStateSt)){
             StateList.add(MStateSt);
-
-
+            Map<String, Object> map = new HashMap<>();
+            map.put(ST.MY_LIST, StateList);
+            ST.StateList.update(map);
         }
+        if (!DistrictList.contains(MDistrictSt)){
+            DistrictList.add(MDistrictSt);
+            Map<String, Object> map = new HashMap<>();
+            map.put(ST.MY_LIST, DistrictList);
+            ST.DistrictList(MStateSt).update(map);
+        }
+        if (!TahsilList.contains(MTahsilSt)){
+            TahsilList.add(MTahsilSt);
+            Map<String, Object> map = new HashMap<>();
+            map.put(ST.MY_LIST, TahsilList);
+            ST.TahsilList(MStateSt, MDistrictSt).update(map);
+        }
+        if (!VillageList.contains(MVillageSt)){
+            VillageList.add(MVillageSt);
+            Map<String, Object> map = new HashMap<>();
+            map.put(ST.MY_LIST, VillageList);
+            ST.VillageList(MStateSt,MDistrictSt,MTahsilSt).update(map);
+        }
+        if (!VillagesL.contains(MVillageSt)){
+            VillagesL.add(MVillageSt);
+        }
+        if (!VillagesL.contains(MotherVilageSt)){
+            VillagesL.add(MotherVilageSt);
+        }
+        if (!VillagesL.contains(FatherVillageSt)){
+            VillagesL.add(FatherVillageSt);
+        }
+        if (!VillagesL.contains(CurrentPartnerVillageSt)){
+            VillagesL.add(CurrentPartnerVillageSt);
+        }
+        Map<String, Object> VillageMap = new HashMap<>();
+        VillageMap.put(ST.MY_LIST, VillagesL);
+        ST.Villages.update(VillageMap);
+
         if (!CastList.contains(MCastSt)){
             CastList.add(MCastSt);
             Map<String, Object> castMap = new HashMap<>();
             castMap.put(ST.MY_LIST,CastList);
             ST.CastList.update(castMap);
         }
+
+        Map<String, Object> MemberCompleteDataMap = new HashMap<>();
+
+        MemberCompleteDataMap.put(ST.PROFILE_PIC,PhotoURLSt);
+        MemberCompleteDataMap.put(ST.MEMBER_NAME,MemberNameSt);
+        MemberCompleteDataMap.put(ST.EDUCATION_STATUS,EducationStatusSt);
+        MemberCompleteDataMap.put(ST.IS_MALE,isMale);
+        MemberCompleteDataMap.put(ST.DOB,ST.birthDate);
+        MemberCompleteDataMap.put(ST.IS_ALIVE,isAlive);
+        if (!isAlive)
+        MemberCompleteDataMap.put(ST.DOD,ST.deathDate);
+        MemberCompleteDataMap.put(ST.STATE,MStateSt);
+        MemberCompleteDataMap.put(ST.DISTRICT,MDistrictSt);
+        MemberCompleteDataMap.put(ST.TAHSIL,MTahsilSt);
+        MemberCompleteDataMap.put(ST.VILLAGE,MVillageSt);
+        MemberCompleteDataMap.put(ST.PRIMARY_MOBILE_NO,PrimaryMobileSt);
+        MemberCompleteDataMap.put(ST.SECONDARY_MOBILE_NO,SecondaryMobileSt);
+        MemberCompleteDataMap.put(ST.CAST,MCastSt);
+        MemberCompleteDataMap.put(ST.WORK,WorkSt);
+        MemberCompleteDataMap.put(ST.FATHER_ID,FatherIdSt);
+        MemberCompleteDataMap.put(ST.FATHER_NAME,FatherNameSt);
+        MemberCompleteDataMap.put(ST.FATHER_VILLAGE,FatherVillageSt);
+        MemberCompleteDataMap.put(ST.MOTHER_VILLAGE,MotherVilageSt);
+        MemberCompleteDataMap.put(ST.MOTHER_NAME,MotherNameSt);
+        MemberCompleteDataMap.put(ST.MOTHER_CAST,MotherCastSt);
+        MemberCompleteDataMap.put(ST.MOTHER_ID,MotherIdSt);
+        MemberCompleteDataMap.put(ST.IS_SINGLE,isSingle);
+        MemberCompleteDataMap.put(ST.IS_DIVORCED,isDivorced);
+        MemberCompleteDataMap.put(ST.IS_WIDOW,isWidow);
+        MemberCompleteDataMap.put(ST.IS_MARRIED_AFTER_PARTNER_DEATH,isMarriedAfterPartnerDeath);
+        MemberCompleteDataMap.put(ST.IS_MARRIED_AFTER_DIVORCED_WITH_PARTNER,isMarriedAfterDivorcedWithPartner);
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_VILLAGE,CurrentPartnerVillageSt);
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_CAST,CurrentPartnerCastSt);
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_NAME,CurrentPartnerNameSt);
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_ID,CurrentPartnerIdSt);
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildList);
+        MemberCompleteDataMap.put(ST.PAST_PARTNER_LIST,PartnerList);
+//        MemberCompleteDataMap.put(ST.FIRST_RELATION_KEY,);
+//        MemberCompleteDataMap.put(ST.FIRST_RELATION_VALUE,);
+//        MemberCompleteDataMap.put(ST.FIRST_RELATION_ID,);
+        MemberCompleteDataMap.put(ST.EDITORS_LIST,EditorsList);
+//        MemberCompleteDataMap.put(ST.LAST_EDITED_BY_ID,);
+        MemberCompleteDataMap.put(ST.LAST_EDITED_BY_UID,ST.mUid);
+//        MemberCompleteDataMap.put(ST.LAST_EDITED_BY_NAME,);
+        MemberCompleteDataMap.put(ST.LAST_EDITED_BY_MOBILE_NUMBER,Objects.requireNonNull(ST.currentUser.getPhoneNumber()));
+
+        ST.CompleteDataSingle(Mid).update(MemberCompleteDataMap);
+
+
+
     }
 
     public void CancelBt(View view){
