@@ -83,6 +83,10 @@
     <string name="above_input">कृपया पहले उपर के सभी इनपुट को भरें !!</string>
     <string name="contact_us_problem">कोई समस्या है कृपया हमे संपर्क करें!!</string>
     <string name="photo_not_there">फोटो उपलब्ध नहीं!</string>
+    <string name="last_edited">अंतिम संपादित किया गया!!</string>
+    <string name="editing_key">संपादित कुंजी</string>
+    <string name="wrong_input">कृपया निचे दिये गये नंबर पर संपर्क करें अगर आप इसे संपादित करना चाहते है तो !!</string>
+    <string name="saved">सहेजा गया</string>
 
     <array name="list_education">
 

@@ -88,6 +88,15 @@ public class ST {
     public static final String LAST_EDITED_BY_NAME = "LastEditedByName";
     public static final String SELF_INFO = "SelfInfo";
     public static final String LAST_EDITED_BY_MOBILE_NUMBER = "LastEditedByMobileNumber";
+    public static final String CHILD_ID = "ChildId";
+    public static final String CHILD_NAME = "ChildName";
+    public static final String CHILD_VILLAGE = "ChildVillage";
+    public static final String CHILD_IS_MALE = "ChildIsMale";
+    public static final String PAST_PARTNER_ID = "PastPartnerId";
+    public static final String PAST_PARTNER_NAME = "PastPartnerName";
+    public static final String PAST_PARTNER_CAST = "PastPartnerCast";
+    public static final String PAST_PARTNER_VILLAGE = "PastPartnerVillage";
+    public static final String PAST_PARTNER_MARRIAGE_DATE = "PastPartnerMarriageDate";
 
     public static FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     public static String mUid = ST.currentUser!=null?ST.currentUser.getUid():null;
