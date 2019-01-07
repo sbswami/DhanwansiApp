@@ -52,7 +52,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/not_found"
@@ -60,8 +61,8 @@
             android:layout_height="wrap_content"
             android:textColor="@color/text_color"
             android:textSize="@dimen/text_size"
-            android:text="@string/not_found"/>
-
+            android:text="@string/not_found"
+            android:visibility="visible"/>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -73,7 +74,7 @@
         android:onClick="FilterBt"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/advertise_white"
+        app:srcCompat="@drawable/filter"
         android:focusable="true" />
 
 </android.support.constraint.ConstraintLayout>

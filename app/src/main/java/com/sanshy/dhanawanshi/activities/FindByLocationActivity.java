@@ -45,7 +45,7 @@ public class FindByLocationActivity extends AppCompatActivity {
         ListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         ListAdapter = new SingleListAdapter(ItemList, new SingleListAdapter.MyAdapterListener() {
             @Override
-            public void ProductListener(View v, int position) {
+            public void PersonListener(View v, int position) {
                 Intent intent = new Intent(FindByLocationActivity.this,ViewSingle.class);
 
                 intent.putExtra(ST.MEMBER_ID,ItemList.get(position).getId());

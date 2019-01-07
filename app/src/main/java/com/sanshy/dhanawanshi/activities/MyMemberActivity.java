@@ -43,7 +43,7 @@ public class MyMemberActivity extends AppCompatActivity {
         ListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         ListAdapter = new SingleListAdapter(ItemList, new SingleListAdapter.MyAdapterListener() {
             @Override
-            public void ProductListener(View v, int position) {
+            public void PersonListener(View v, int position) {
                 Intent intent = new Intent(MyMemberActivity.this,ViewSingle.class);
 
                 startActivity(intent);

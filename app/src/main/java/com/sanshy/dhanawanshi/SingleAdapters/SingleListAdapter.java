@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sanshy.dhanawanshi.R;
@@ -76,7 +75,7 @@ public class SingleListAdapter extends RecyclerView.Adapter<SingleListAdapter.My
             SingleCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onClickListener.ProductListener(v, getAdapterPosition());
+                    onClickListener.PersonListener(v, getAdapterPosition());
                 }
             });
         }
@@ -84,7 +83,7 @@ public class SingleListAdapter extends RecyclerView.Adapter<SingleListAdapter.My
 
 
     public interface MyAdapterListener {
-        void ProductListener(View v, int position);
+        void PersonListener(View v, int position);
     }
 
     public SingleListAdapter(ArrayList<SingleListItem> productList, MyAdapterListener onClickListener){
