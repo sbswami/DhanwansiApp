@@ -97,9 +97,10 @@ public class ST {
     public static final String PAST_PARTNER_CAST = "PastPartnerCast";
     public static final String PAST_PARTNER_VILLAGE = "PastPartnerVillage";
     public static final String PAST_PARTNER_MARRIAGE_DATE = "PastPartnerMarriageDate";
+    public static final String PAST_PARTNER_CHILD_LIST = "PastPartnerChildList";
 
     public static FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-    public static String mUid = ST.currentUser!=null?ST.currentUser.getUid():null;
+    public static String mUid = ST.currentUser!=null?ST.currentUser.getUid():"000";
     public static FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static CollectionReference LocRef = db.collection(LOCATIONS);
     public static CollectionReference CastRef = db.collection(CASTS);
@@ -108,6 +109,7 @@ public class ST {
     public static CollectionReference CompleteDataList = db.collection(COMPLETE_DATA_LIST);
     public static CollectionReference MyMembersList = db.collection(ST.mUid).document(MY_MEMBER_LIST).collection(MY_MEMBER_LIST);
     public static CollectionReference SavedList = db.collection(ST.mUid).document(SAVED_LIST).collection(SAVED_LIST);
+    public static DocumentReference SearchSuggetion = db.collection(ST.mUid).document(SEARCH_DATA_LIST);
     public static CollectionReference NotificationList = db.collection(NOTIFICATIONS);
     public static CollectionReference DonationList = db.collection(DONATIONS);
     public static DocumentReference SelfInfo = db.collection(ST.mUid).document(SELF_INFO);
@@ -334,7 +336,8 @@ public class ST {
     }
 
     public static String GenerateId(Date date, String Name, String Village){
-        return date.getTime()+"_"+mUid+"_"+Name+"_"+Village;
+
+        return date.getTime()+"_"+mUid+"_"+Name.replaceAll("\\s+","_")+"_"+Village.replaceAll("\\s+","_");
     }
 
     public static String DateToString(Date date){
@@ -370,7 +373,7 @@ public class ST {
                 view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight() - view.getMeasuredHeight()*2/5;
+            totalHeight += view.getMeasuredHeight();
         }
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));

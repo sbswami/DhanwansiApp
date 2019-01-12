@@ -22,6 +22,15 @@
                 android:textColor="@color/text_color"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/mini_title_text" />
+            <AutoCompleteTextView
+                android:id="@+id/m_current_partner_cast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/icon_margin"
+                android:ems="10"
+                android:hint="@string/jiwansathi_ka_gotr"
+                android:inputType="textPersonName"
+                android:textSize="@dimen/text_size" />
 
             <AutoCompleteTextView
                 android:id="@+id/m_current_partner_village"
@@ -33,15 +42,6 @@
                 android:inputType="textPersonName"
                 android:textSize="@dimen/text_size" />
 
-            <AutoCompleteTextView
-                android:id="@+id/m_current_partner_cast"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/icon_margin"
-                android:ems="10"
-                android:hint="@string/jiwansathi_ka_gotr"
-                android:inputType="textPersonName"
-                android:textSize="@dimen/text_size" />
 
             <AutoCompleteTextView
                 android:id="@+id/m_current_partner_name"

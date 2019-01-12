@@ -52,6 +52,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 ST.currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 ST.mUid = ST.currentUser.getUid();
                 startActivity(new Intent(this, Home.class));
+                this.finish();
                 // ...
             } else {
 

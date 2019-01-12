@@ -87,6 +87,11 @@
     <string name="editing_key">संपादित कुंजी</string>
     <string name="wrong_input">कृपया निचे दिये गये नंबर पर संपर्क करें अगर आप इसे संपादित करना चाहते है तो !!</string>
     <string name="saved">सहेजा गया</string>
+    <string name="delete">मिटाएँ</string>
+    <string name="sure_delete">क्या आप सच में मिटाना चाहतें है!!</string>
+    <string name="photo_chune">फोटो चुने</string>
+    <string name="camara">कैमरा</string>
+    <string name="gallary">गेलरी</string>
 
     <array name="list_education">
 

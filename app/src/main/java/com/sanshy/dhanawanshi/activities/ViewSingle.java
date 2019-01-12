@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.sanshy.dhanawanshi.Home;
 import com.sanshy.dhanawanshi.R;
 import com.sanshy.dhanawanshi.ST;
 import com.sanshy.dhanawanshi.SingleAdapters.SingleChildListAdapter;
@@ -62,6 +63,11 @@ public class ViewSingle extends AppCompatActivity {
         Mid = intent.getStringExtra(ST.MEMBER_ID);
 
         try{
+            String DataString = intent.getData().toString();
+            if (DataString.contains("http://www.dhanawanshisamaj.com/")){
+
+                Mid = DataString.substring(DataString.lastIndexOf("/")+1);
+            }
             Toast.makeText(this, ""+intent.getData().toString(), Toast.LENGTH_SHORT).show();
         }catch (Exception e){}
 
@@ -109,12 +115,15 @@ public class ViewSingle extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (view.getId()){
                     case R.id.bche_ka_naam:
+                        PersonViewOpen(childListItems.get(position).getId());
                         break;
                     case R.id.bache_ka_ling:
                         break;
                     case R.id.bache_ka_ganv:
+                        VillageSearchOpen(childListItems.get(position).getChildVillage());
                         break;
                     default:
+                        PersonViewOpen(childListItems.get(position).getId());
                 }
             }
         });
@@ -124,16 +133,21 @@ public class ViewSingle extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (view.getId()){
                     case R.id.jiwansathi_ka_naam:
+                        PersonViewOpen(pastPartnerList.get(position).getPartnerId());
                         break;
                     case R.id.jiwansathi_ka_gotr:
+                        CastSearchOpen(pastPartnerList.get(position).getPartnerCast());
                         break;
                     case R.id.jiwansathi_ka_ganv:
+                        VillageSearchOpen(pastPartnerList.get(position).getPartnerGanv());
                         break;
                     case R.id.sadi_tarikh:
                         break;
                     case R.id.child_list:
+                        PersonViewOpen(pastPartnerList.get(position).getPartnerId());
                         break;
                     default:
+                        PersonViewOpen(pastPartnerList.get(position).getPartnerId());
                 }
             }
         });
@@ -240,8 +254,8 @@ public class ViewSingle extends AppCompatActivity {
             MTahsil.setText(MTahsilSt);
         }
         if (documentSnapshot.contains(ST.VILLAGE)){
-            MotherVillageSt = (String) documentSnapshot.get(ST.VILLAGE);
-            MMotherVillage.setText(MotherVillageSt);
+            MVillageSt = (String) documentSnapshot.get(ST.VILLAGE);
+            MVillage.setText(MVillageSt);
         }
         if (documentSnapshot.contains(ST.PRIMARY_MOBILE_NO)){
             PrimaryMobileSt = (String) documentSnapshot.get(ST.PRIMARY_MOBILE_NO);
@@ -252,8 +266,8 @@ public class ViewSingle extends AppCompatActivity {
             Mobile.setText(Mobile.getText().toString()+"\n"+SecondaryMobileSt);
         }
         if (documentSnapshot.contains(ST.CAST)){
-            MotherCastSt = (String) documentSnapshot.get(ST.CAST);
-            MMotherCast.setText(MotherCastSt);
+            MCastSt = (String) documentSnapshot.get(ST.CAST);
+            Cast.setText(MCastSt);
         }
         if (documentSnapshot.contains(ST.WORK)){
             WorkList = (ArrayList<String>) documentSnapshot.get(ST.WORK);
@@ -485,27 +499,27 @@ public class ViewSingle extends AppCompatActivity {
         startActivity(intent);
     }
     public void CastSearchOpen(String Cast){
-        Intent intent = new Intent(ViewSingle.this,ViewSingle.class);
+        Intent intent = new Intent(ViewSingle.this,SimpleListActivity.class);
         intent.putExtra(ST.CAST,Cast);
         startActivity(intent);
     }
     public void VillageSearchOpen(String Village){
-        Intent intent = new Intent(ViewSingle.this,ViewSingle.class);
+        Intent intent = new Intent(ViewSingle.this,SimpleListActivity.class);
         intent.putExtra(ST.VILLAGE,Village);
         startActivity(intent);
     }
     public void TahsilSearchOpen(String Tahsil){
-        Intent intent = new Intent(ViewSingle.this,ViewSingle.class);
+        Intent intent = new Intent(ViewSingle.this,SimpleListActivity.class);
         intent.putExtra(ST.TAHSIL,Tahsil);
         startActivity(intent);
     }
     public void DistrictSearchOpen(String District){
-        Intent intent = new Intent(ViewSingle.this,ViewSingle.class);
+        Intent intent = new Intent(ViewSingle.this,SimpleListActivity.class);
         intent.putExtra(ST.DISTRICT,District);
         startActivity(intent);
     }
     public void StateSearchOpen(String State){
-        Intent intent = new Intent(ViewSingle.this,ViewSingle.class);
+        Intent intent = new Intent(ViewSingle.this,SimpleListActivity.class);
         intent.putExtra(ST.STATE,State);
         startActivity(intent);
     }
@@ -579,5 +593,10 @@ public class ViewSingle extends AppCompatActivity {
         ST.SavedSingle(Mid).set(SavedMap);
         ST.ShowDialog(ViewSingle.this,getString(R.string.saved));
         
+    }
+
+    public void GoHome(View view){
+        startActivity(new Intent(this,Home.class));
+        this.finish();
     }
 }

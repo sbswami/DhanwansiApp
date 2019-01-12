@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.SearchView;
@@ -29,6 +30,8 @@ import com.sanshy.dhanawanshi.SingleItems.SingleListItem;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SearchByNameActivity extends AppCompatActivity {
 
@@ -38,7 +41,7 @@ public class SearchByNameActivity extends AppCompatActivity {
     ArrayList<SingleListItem> ItemList = new ArrayList<>();
     SingleListAdapter ListAdapter;
 
-    SearchView searchView;
+    AutoCompleteTextView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,7 @@ public class SearchByNameActivity extends AppCompatActivity {
 
         ListRecyclerView = findViewById(R.id.list_recycler_view);
         NoFoundShow = findViewById(R.id.not_found);
-        searchView = findViewById(R.id.search_home);
+        searchView = findViewById(R.id.search_home_bar);
 
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -57,7 +60,7 @@ public class SearchByNameActivity extends AppCompatActivity {
             @Override
             public void PersonListener(View v, int position) {
                 Intent intent = new Intent(SearchByNameActivity.this,ViewSingle.class);
-
+                intent.putExtra(ST.MEMBER_ID,ItemList.get(position).getId());
                 startActivity(intent);
             }
         });
@@ -72,7 +75,6 @@ public class SearchByNameActivity extends AppCompatActivity {
                 lastVisibleItem = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
                 if (!isLoading&&totalItemCount<=(lastVisibleItem+2)){
                     isLoading = true;
-                    ST.ShowProgress(SearchByNameActivity.this);
                     SearchDataMethod();
                     Toast.makeText(SearchByNameActivity.this, ""+totalItemCount, Toast.LENGTH_SHORT).show();
                 }
@@ -80,24 +82,29 @@ public class SearchByNameActivity extends AppCompatActivity {
             }
         });
 
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ItemList.clear();
-                SearchDataMethod();
-            }
-        });
-        SearchDataMethod();
     }
 
+    public void SearchBt(View view){
+        ItemList.clear();
+        isLastDoc = false;
+        SearchDataMethod();
+        if (SearchList.contains(searchView.getText().toString())){
+            Map<String,Object> map = new HashMap<>();
+            map.put(ST.MY_LIST,SearchList);
+            ST.SearchSuggetion.set(map);
+
+        }
+    }
     DocumentSnapshot lastDocumentSnapshot = null;
+    boolean isLastDoc = false;
 
 
     public void SearchDataMethod(){
-        if (searchView.getQuery().toString().isEmpty()){
+        if (searchView.getText().toString().isEmpty()){
             ST.FillInput(SearchByNameActivity.this);
             return;
         }
+
 
         Calendar nowMin = Calendar.getInstance();
         nowMin.add(Calendar.YEAR, -(int)MinAgeD);
@@ -108,25 +115,25 @@ public class SearchByNameActivity extends AppCompatActivity {
         Date MaxDate = nowMax.getTime();
 
         if (lastDocumentSnapshot!=null){
+            ST.ShowProgress(SearchByNameActivity.this);
             if (StateSt.isEmpty()){
                 if (DistrictSt.isEmpty()){
                     if (TahsilSt.isEmpty()){
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+
                                         .limit(10)
+                                        
                                         .startAfter(lastDocumentSnapshot).get()
                                         .addOnSuccessListener(SuccessListener)
                                         .addOnFailureListener(FailureListener);
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .limit(10)
                                         .startAfter(lastDocumentSnapshot).get()
@@ -135,9 +142,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .limit(10)
                                         .startAfter(lastDocumentSnapshot).get()
@@ -146,9 +152,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .limit(10)
@@ -160,9 +165,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .limit(10)
                                         .startAfter(lastDocumentSnapshot).get()
@@ -171,9 +175,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .limit(10)
@@ -183,9 +186,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .limit(10)
@@ -195,9 +197,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -212,9 +213,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .limit(10)
                                         .startAfter(lastDocumentSnapshot).get()
@@ -223,9 +223,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .limit(10)
@@ -235,9 +234,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .limit(10)
@@ -247,9 +245,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -262,9 +259,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .limit(10)
@@ -274,9 +270,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -287,9 +282,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -300,9 +294,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -320,9 +313,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
                                         .startAfter(lastDocumentSnapshot).get()
@@ -331,9 +323,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
@@ -343,9 +334,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
@@ -355,9 +345,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -370,9 +359,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
@@ -382,9 +370,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -395,9 +382,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -408,9 +394,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -426,9 +411,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
@@ -438,9 +422,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -451,9 +434,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -464,9 +446,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -480,9 +461,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -493,9 +473,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -507,9 +486,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -521,9 +499,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -544,9 +521,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
                                         .startAfter(lastDocumentSnapshot).get()
@@ -555,9 +531,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -567,9 +542,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -579,9 +553,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -594,9 +567,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -606,9 +578,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -619,9 +590,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -632,9 +602,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -650,9 +619,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -662,9 +630,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -675,9 +642,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -688,9 +654,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -704,9 +669,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -717,9 +681,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -731,9 +694,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -745,9 +707,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -766,9 +727,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -778,9 +738,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -791,9 +750,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -804,9 +762,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -820,9 +777,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -833,9 +789,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -847,9 +802,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -861,9 +815,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -880,9 +833,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -893,9 +845,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -907,9 +858,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -921,9 +871,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -938,9 +887,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -952,9 +900,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -967,9 +914,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -982,9 +928,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -1001,16 +946,16 @@ public class SearchByNameActivity extends AppCompatActivity {
                 }
             }
         }
-        else{
+        else if (!isLastDoc){
+            ST.ShowProgress(SearchByNameActivity.this);
             if (StateSt.isEmpty()){
                 if (DistrictSt.isEmpty()){
                     if (TahsilSt.isEmpty()){
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .limit(10)
                                         .get()
                                         .addOnSuccessListener(SuccessListener)
@@ -1018,9 +963,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .limit(10)
                                         .get()
@@ -1029,9 +973,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .limit(10)
                                         .get()
@@ -1040,9 +983,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .limit(10)
@@ -1054,9 +996,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .limit(10)
                                         .get()
@@ -1065,9 +1006,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .limit(10)
@@ -1077,9 +1017,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .limit(10)
@@ -1089,9 +1028,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -1106,9 +1044,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .limit(10)
                                         .get()
@@ -1117,9 +1054,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .limit(10)
@@ -1129,9 +1065,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .limit(10)
@@ -1141,9 +1076,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1156,9 +1090,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .limit(10)
@@ -1168,9 +1101,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1181,9 +1113,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1194,9 +1125,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -1214,9 +1144,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
                                         .get()
@@ -1225,9 +1154,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
@@ -1237,9 +1165,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
@@ -1249,9 +1176,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1264,9 +1190,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
@@ -1276,9 +1201,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1289,9 +1213,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1302,9 +1225,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -1320,9 +1242,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .limit(10)
@@ -1332,9 +1253,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1345,9 +1265,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1358,9 +1277,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1374,9 +1292,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1387,9 +1304,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1401,9 +1317,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1415,9 +1330,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -1438,9 +1352,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
                                         .get()
@@ -1449,9 +1362,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -1461,9 +1373,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -1473,9 +1384,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1488,9 +1398,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -1500,9 +1409,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1513,9 +1421,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1526,9 +1433,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -1544,9 +1450,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -1556,9 +1461,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1569,9 +1473,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1582,9 +1485,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1598,9 +1500,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1611,9 +1512,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1625,9 +1525,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1639,9 +1538,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -1660,9 +1558,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
                                         .limit(10)
@@ -1672,9 +1569,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1685,9 +1581,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1698,9 +1593,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1714,9 +1608,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1727,9 +1620,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1741,9 +1633,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1755,9 +1646,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -1774,9 +1664,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         if (VillageSt.isEmpty()){
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
                                         .whereEqualTo(ST.STATE,StateSt)
@@ -1787,9 +1676,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1801,9 +1689,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1815,9 +1702,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1832,9 +1718,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                         else{
                             if (CastSt.isEmpty()&&EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
                                         .whereEqualTo(ST.DISTRICT,DistrictSt)
@@ -1846,9 +1731,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (CastSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1861,9 +1745,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else if (EducationSt.isEmpty()){
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
                                         .whereEqualTo(ST.TAHSIL,TahsilSt)
@@ -1876,9 +1759,8 @@ public class SearchByNameActivity extends AppCompatActivity {
                             }
                             else {
                                 ST.SearchDataList
-                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                                        .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                                        .whereLessThanOrEqualTo(ST.DOB,MinDate)
+                                        .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+                                        
                                         .whereEqualTo(ST.EDUCATION_STATUS,EducationSt)
                                         .whereEqualTo(ST.CAST,CastSt)
                                         .whereEqualTo(ST.VILLAGE,VillageSt)
@@ -1896,16 +1778,14 @@ public class SearchByNameActivity extends AppCompatActivity {
             }
         }
 
-        
-
-        ST.SearchDataList
-                .whereEqualTo(ST.MEMBER_NAME,searchView.getQuery().toString())
-                .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
-                .whereLessThanOrEqualTo(ST.DOB,MinDate)
-                .limit(10)
-                .get()
-                .addOnSuccessListener(SuccessListener)
-                .addOnFailureListener(FailureListener);
+//        ST.SearchDataList
+//                .whereEqualTo(ST.MEMBER_NAME,searchView.getText().toString())
+//                .whereGreaterThanOrEqualTo(ST.DOB,MaxDate)
+//                .whereLessThanOrEqualTo(ST.DOB,MinDate)
+//                .limit(10)
+//                .get()
+//                .addOnSuccessListener(SuccessListener)
+//                .addOnFailureListener(FailureListener);
 
     }
 
@@ -1925,10 +1805,13 @@ public class SearchByNameActivity extends AppCompatActivity {
                 );
                 ItemList.add(item);
                 lastDocumentSnapshot = documentSnapshot;
+                isLastDoc = false;
             }
             if (queryDocumentSnapshots.isEmpty()){
                 lastDocumentSnapshot = null;
+                isLastDoc = true;
             }
+            ListRecyclerView.setVisibility(View.VISIBLE);
             isLoading = false;
             ListAdapter.notifyDataSetChanged();
             ST.HideProgress();
@@ -1939,6 +1822,7 @@ public class SearchByNameActivity extends AppCompatActivity {
         @Override
         public void onFailure(@NonNull Exception e) {
             ST.HideProgress();
+            ST.ShowDialog(SearchByNameActivity.this,e.toString());
         }
     };
 
@@ -1976,11 +1860,49 @@ Age
 
 Education
  */
+    ArrayList<String> StateList = new ArrayList<>();
+    ArrayList<String> DistrictList = new ArrayList<>();
+    ArrayList<String> TahsilList = new ArrayList<>();
+    ArrayList<String> VillageList = new ArrayList<>();
+    ArrayList<String> CastList = new ArrayList<>();
+    ArrayList<String> SearchList = new ArrayList<>();
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ST.StateList.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                StateList.clear();
+                if (documentSnapshot.exists()){
+                    StateList = (ArrayList<String>) documentSnapshot.get(ST.MY_LIST);
+                }
+            }
+        });
+        ST.CastList.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                CastList.clear();
+                if (documentSnapshot.exists()){
+                    CastList = (ArrayList<String>) documentSnapshot.get(ST.MY_LIST);
+                }
+            }
+        });
+        ST.SearchSuggetion.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    SearchList = (ArrayList<String>) documentSnapshot.get(ST.MY_LIST);
+                    ST.setSnipper(SearchByNameActivity.this,searchView,SearchList);
+                }
+            }
+        });
+    }
 
     AutoCompleteTextView State,District,Tahsil,Village;
 
     AutoCompleteTextView Cast,Education;
-    EditText MinAge,MaxAge;
+//    EditText MinAge,MaxAge;
     AlertDialog builder;
     public void FilterBt(View view){
 
@@ -2000,12 +1922,64 @@ Education
 
         Cast = FilterView.findViewById(R.id.filter_gotr);
         Education = FilterView.findViewById(R.id.filter_education);
-        MinAge = FilterView.findViewById(R.id.filter_min_age);
-        MaxAge = FilterView.findViewById(R.id.filter_max_age);
+//        MinAge = FilterView.findViewById(R.id.filter_min_age);
+//        MaxAge = FilterView.findViewById(R.id.filter_max_age);
         State = FilterView.findViewById(R.id.m_state);
         District = FilterView.findViewById(R.id.m_district);
         Tahsil = FilterView.findViewById(R.id.m_tahsil);
         Village = FilterView.findViewById(R.id.m_village);
+        ST.setSnipper(SearchByNameActivity.this,State,StateList);
+        ST.setSnipper(SearchByNameActivity.this,Cast,CastList);
+        State.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ST.ShowProgress(SearchByNameActivity.this);
+                ST.DistrictList(State.getText().toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ST.HideProgress();
+                        if (documentSnapshot.exists()){
+                            DistrictList = (ArrayList<String>) documentSnapshot.get(ST.MY_LIST);
+                            ST.setSnipper(SearchByNameActivity.this,District,DistrictList);
+                        }
+                    }
+                });
+            }
+        });
+
+        District.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ST.ShowProgress(SearchByNameActivity.this);
+                ST.TahsilList(State.getText().toString(),District.getText().toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ST.HideProgress();
+                        if (documentSnapshot.exists()){
+                            TahsilList = (ArrayList<String>) documentSnapshot.get(ST.MY_LIST);
+                            ST.setSnipper(SearchByNameActivity.this,Tahsil,TahsilList);
+                        }
+                    }
+                });
+            }
+        });
+
+        Tahsil.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ST.ShowProgress(SearchByNameActivity.this);
+                ST.VillageList(State.getText().toString(),District.getText().toString(), Tahsil.getText().toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ST.HideProgress();
+                        if (documentSnapshot.exists()){
+                            VillageList = (ArrayList<String>) documentSnapshot.get(ST.MY_LIST);
+                            ST.setSnipper(SearchByNameActivity.this,Village,VillageList);
+                        }
+                    }
+                });
+            }
+        });
 
         District.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -2054,12 +2028,14 @@ Education
     }
 
 
-    String StateSt,DistrictSt,TahsilSt,VillageSt;
-    String CastSt,EducationSt;
+    String StateSt = "",DistrictSt = "",TahsilSt = "",VillageSt = "";
+    String CastSt = "",EducationSt = "";
     double MinAgeD,MaxAgeD;
     public void FilterNameSearch(View view){
 
         ItemList.clear();
+        isLastDoc = false;
+
 
         boolean c,l,e,a;
 
@@ -2070,76 +2046,76 @@ Education
         VillageSt = Village.getText().toString();
         EducationSt = Education.getText().toString();
 
-        a = MinAge.getText().toString().isEmpty()&&MaxAge.getText().toString().isEmpty();
+//        a = MinAge.getText().toString().isEmpty()&&MaxAge.getText().toString().isEmpty();
+//
+//        MinAgeD = MinAge.getText().toString().isEmpty()?0:Double.parseDouble(MinAge.getText().toString());
+//        MaxAgeD = MaxAge.getText().toString().isEmpty()?110:Double.parseDouble(MaxAge.getText().toString());
 
-        MinAgeD = MinAge.getText().toString().isEmpty()?0:Double.parseDouble(MinAge.getText().toString());
-        MaxAgeD = MaxAge.getText().toString().isEmpty()?110:Double.parseDouble(MaxAge.getText().toString());
 
-
-        c = CastSt.isEmpty();
-        l = StateSt.isEmpty()&&DistrictSt.isEmpty()&&TahsilSt.isEmpty()&&VillageSt.isEmpty();
-        e = EducationSt.isEmpty();
-
-        if (a){
-            if (c){
-                if (l&&e){
-
-                }
-                else if (l){
-
-                }
-                else if (e){
-
-                }
-                else{
-
-                }
-            }
-            else{
-                if (l&&e){
-
-                }
-                else if (l){
-
-                }
-                else if (e){
-
-                }
-                else{
-
-                }
-            }
-        }
-        else{
-            if (c){
-                if (l&&e){
-
-                }
-                else if (l){
-
-                }
-                else if (e){
-
-                }
-                else{
-
-                }
-            }
-            else{
-                if (l&&e){
-
-                }
-                else if (l){
-
-                }
-                else if (e){
-
-                }
-                else{
-
-                }
-            }
-        }
+//        c = CastSt.isEmpty();
+//        l = StateSt.isEmpty()&&DistrictSt.isEmpty()&&TahsilSt.isEmpty()&&VillageSt.isEmpty();
+//        e = EducationSt.isEmpty();
+//
+//        if (a){
+//            if (c){
+//                if (l&&e){
+//
+//                }
+//                else if (l){
+//
+//                }
+//                else if (e){
+//
+//                }
+//                else{
+//
+//                }
+//            }
+//            else{
+//                if (l&&e){
+//
+//                }
+//                else if (l){
+//
+//                }
+//                else if (e){
+//
+//                }
+//                else{
+//
+//                }
+//            }
+//        }
+//        else{
+//            if (c){
+//                if (l&&e){
+//
+//                }
+//                else if (l){
+//
+//                }
+//                else if (e){
+//
+//                }
+//                else{
+//
+//                }
+//            }
+//            else{
+//                if (l&&e){
+//
+//                }
+//                else if (l){
+//
+//                }
+//                else if (e){
+//
+//                }
+//                else{
+//
+//                }
+//            }
+//        }
 
         SearchDataMethod();
 

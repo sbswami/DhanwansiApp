@@ -118,40 +118,40 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/cardview_margin"
-                app:cardCornerRadius="10sp"
-                app:contentPadding="@dimen/card_view_padding"
-                android:layout_gravity="center">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="@dimen/cardview_margin"
-                    android:layout_marginEnd="@dimen/cardview_margin">
+            <!--<android.support.v7.widget.CardView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_margin="@dimen/cardview_margin"-->
+                <!--app:cardCornerRadius="10sp"-->
+                <!--app:contentPadding="@dimen/card_view_padding"-->
+                <!--android:layout_gravity="center">-->
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:layout_marginStart="@dimen/cardview_margin"-->
+                    <!--android:layout_marginEnd="@dimen/cardview_margin">-->
 
-                    <EditText
+                    <!--<EditText-->
 
-                        android:id="@+id/filter_min_age"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/min_age"
-                        android:inputType="numberDecimal" />
+                        <!--android:id="@+id/filter_min_age"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:ems="10"-->
+                        <!--android:hint="@string/min_age"-->
+                        <!--android:inputType="numberDecimal" />-->
 
-                    <EditText
+                    <!--<EditText-->
 
-                        android:id="@+id/filter_max_age"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/max_age"
-                        android:inputType="numberDecimal" />
+                        <!--android:id="@+id/filter_max_age"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:ems="10"-->
+                        <!--android:hint="@string/max_age"-->
+                        <!--android:inputType="numberDecimal" />-->
 
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                <!--</LinearLayout>-->
+            <!--</android.support.v7.widget.CardView>-->
 
 
 

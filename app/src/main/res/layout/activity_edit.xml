@@ -26,13 +26,30 @@
                 android:textAlignment="center"
                 android:textColor="@color/text_color"
                 android:textSize="@dimen/title_size" />
-
-            <ImageView
-                android:id="@+id/profile_image"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="SetPicture"
-                app:srcCompat="@drawable/no_photo_pic" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/icon_margin"
+                    android:layout_weight="0.5"
+                    android:text="@string/photo_chune"
+                    android:onClick="SetPicture"
+                    android:textSize="@dimen/text_size" />
+
+                <ImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="SetPicture"
+                    app:srcCompat="@drawable/no_photo_pic" />
+            </LinearLayout>
+
 
             <EditText
                 android:textColor="@color/text_color"

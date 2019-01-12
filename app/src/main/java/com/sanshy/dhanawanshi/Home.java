@@ -34,6 +34,10 @@ public class Home extends AppCompatActivity {
         if (ST.currentUser==null){
             startActivity(new Intent(this, WelcomeActivity.class));
             this.finish();
+        }else{
+            ST.MyMembersList = ST.db.collection(ST.mUid).document(ST.MY_MEMBER_LIST).collection(ST.MY_MEMBER_LIST);
+            ST.SavedList = ST.db.collection(ST.mUid).document(ST.SAVED_LIST).collection(ST.SAVED_LIST);
+            ST.SearchSuggetion = ST.db.collection(ST.mUid).document(ST.SEARCH_DATA_LIST);
         }
 
         toolbar = findViewById(R.id.toolbar);

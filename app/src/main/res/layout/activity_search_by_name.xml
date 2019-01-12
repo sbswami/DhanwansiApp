@@ -29,20 +29,22 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <SearchView
-                    android:id="@+id/search_home"
+                <AutoCompleteTextView
+                    android:id="@+id/search_home_bar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="6"
                     android:iconifiedByDefault="false"
-                    android:queryHint="@string/naam_se_khoje" />
+                    android:textColor="@color/text_color"
+                    android:hint="@string/naam_se_khoje" />
 
-                <!--<ImageView-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:contentDescription="@string/naam_se_khoje"-->
-                    <!--android:src="@drawable/ic_search_black_24dp" />-->
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/naam_se_khoje"
+                    android:onClick="SearchBt"
+                    android:src="@drawable/ic_search_black_24dp" />
 
             </LinearLayout>
 
@@ -53,7 +55,7 @@
             android:id="@+id/list_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <TextView
             android:id="@+id/not_found"
