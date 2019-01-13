@@ -36,61 +36,34 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/bche_ka_naam"/>
-                        <TextView
                             android:id="@+id/bche_ka_naam"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
+                            android:layout_weight="2"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
+                            android:layout_margin="@dimen/child_text_margin"
                             android:textSize="@dimen/text_size"
                             android:text="@string/bche_ka_naam"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/bache_ka_ling"/>
                         <TextView
                             android:id="@+id/bache_ka_ling"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
+                            android:layout_weight="0.8"
+                            android:layout_margin="@dimen/child_text_margin"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
                             android:text="@string/bache_ka_ling"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/bache_ka_ganv"/>
                         <TextView
                             android:id="@+id/bache_ka_ganv"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
+                            android:layout_weight="1.2"
+                            android:layout_margin="@dimen/child_text_margin"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
                             android:text="@string/bache_ka_ganv"/>
                     </LinearLayout>
+
                 </LinearLayout>
 
 

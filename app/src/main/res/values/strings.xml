@@ -52,14 +52,14 @@
     <string name="mobile_no_secondary">दूसरा मोबाइल नंबर</string>
     <string name="divorced">तलाकशुदा</string>
     <string name="widow">विधवा / विधुर</string>
-    <string name="second_married">म्रत्यु के बाद विविहित</string>
+    <string name="second_married">जीवनसाथी की म्रत्यु के बाद दुबारा विविहित</string>
     <string name="jiwansathi_ka_ganv">जीवनसाथी का गाँव</string>
     <string name="jiwansathi_ka_gotr">जीवनसाथी का गोत्र</string>
     <string name="jiwansathi_ka_naam">जीवनसाथी का नाम</string>
     <string name="sadi_tarikh">शादी की तिथि</string>
     <string name="jnm_tithi">जन्म तिथि</string>
     <string name="beta_beti_jode">बेटा बेटी जोड़े</string>
-    <string name="married_after_death">तलाक के बाद विवाहित</string>
+    <string name="married_after_death">तलाक के बाद दुबारा विवाहित</string>
     <string name="add_past_jiwansathi">भूतपूर्व जीवनसाथी जोड़े</string>
     <string name="bche_ka_naam">बच्चे का नाम</string>
     <string name="bache_ka_ling">बच्चे का लिंग</string>
@@ -89,9 +89,26 @@
     <string name="saved">सहेजा गया</string>
     <string name="delete">मिटाएँ</string>
     <string name="sure_delete">क्या आप सच में मिटाना चाहतें है!!</string>
-    <string name="photo_chune">फोटो चुने</string>
+    <string name="photo_chune">फोटो चुने…</string>
     <string name="camara">कैमरा</string>
     <string name="gallary">गेलरी</string>
+    <string name="mukhy_prsth">मुख्य पृष्ठ पर जाएँ</string>
+    <string name="k_bare_me">मुख्य जानकारी</string>
+    <string name="address">पता / स्थाई निवासी </string>
+    <string name="naam">नाम</string>
+    <string name="dot">-</string>
+    <string name="pita">पिता जी</string>
+    <string name="mata_ji">माता जी</string>
+    <string name="pita_ki_gotr">पिता का गोत्र</string>
+    <string name="please">इस सदस्य को अंतिम बार इस मोबाइल नंबर</string>
+    <string name="sampadit">से संपादित किया गया है, \n संपादित कुंजी प्राप्त करने के लिए</string>
+    <string name="last_string">से संपर्क करें \n अन्य किसी सहायता / शिकायत / सुझाव के लिए \'शिकायत/सुझाव पर जाएँ\'</string>
+    <string name="smpadit_kunji_request">संपादित कुजी यंहा लिखें</string>
+    <string name="member_name_ynha_likhen">सदस्य का नाम यहाँ लिखें</string>
+    <string name="gotr_likhen">गोत्र यहाँ लिखें</string>
+    <string name="date_fomat">DD/MM/YYYY</string>
+    <string name="wasi">वासी</string>
+    <string name="vivahik_sthithi_chune">विवाहिक स्थिति चुने...</string>
 
     <array name="list_education">
 
@@ -99,6 +116,15 @@
         <item>जिंदिगी</item>
         <item>विकास</item>
         <item>विनाश</item>
+    </array>
+
+    <array name="list_marriage">
+        <item>अविवाहित</item>
+        <item>विवाहित</item>
+        <item>तलाकशुदा</item>
+        <item>विधवा / विधुर</item>
+        <item>जीवनसाथी की म्रत्यु के बाद दुबारा विविहित</item>
+        <item>तलाक के बाद दुबारा विवाहित</item>
     </array>
 
 </resources>

@@ -24,12 +24,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:onClick="GoHome"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/home" />
 
                 <ImageView
                     android:id="@+id/profile_image"
@@ -56,8 +50,7 @@
                 android:layout_margin="@dimen/cardview_margin"
                 app:cardCornerRadius="10sp"
                 app:contentPadding="@dimen/card_view_padding"
-                android:layout_gravity="center"
-                >
+                android:layout_gravity="center">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -67,7 +60,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_gravity="top">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -81,6 +75,32 @@
                             <ImageButton
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:background="@color/transperant"
+                                android:padding="@dimen/comman_icon_padding"
+                                android:onClick="GoHome"
+                                android:src="@drawable/home"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/mukhy_prsth"
+                                android:onClick="SaveToList"
+                                android:textColor="@color/icon_name_color"
+                                android:textSize="@dimen/comman_icon_name_size" />
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/icon_margin"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageButton
+                                android:layout_width="@dimen/mini_icon_size"
+                                android:layout_height="@dimen/mini_icon_size"
                                 android:background="@color/transperant"
                                 android:padding="@dimen/comman_icon_padding"
                                 android:onClick="SaveToList"
@@ -106,8 +126,8 @@
                             android:orientation="vertical">
 
                             <ImageButton
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/mini_icon_size"
+                                android:layout_height="@dimen/mini_icon_size"
                                 android:background="@color/transperant"
                                 android:padding="@dimen/comman_icon_padding"
                                 android:onClick="SupportComplain"
@@ -116,7 +136,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/sikayt"
+                                android:text="@string/sikayt_ya_sujhav"
                                 android:onClick="SupportComplain"
                                 android:textColor="@color/icon_name_color"
                                 android:textSize="@dimen/comman_icon_name_size" />
@@ -133,8 +153,8 @@
                             android:orientation="vertical">
 
                             <ImageButton
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/mini_icon_size"
+                                android:layout_height="@dimen/mini_icon_size"
                                 android:background="@color/transperant"
                                 android:padding="@dimen/comman_icon_padding"
                                 android:onClick="EditMember"
@@ -155,12 +175,12 @@
                             android:layout_gravity="center"
                             android:layout_margin="@dimen/icon_margin"
                             android:layout_weight="1"
-                            android:gravity="center"
+                            android:gravity="top"
                             android:orientation="vertical">
 
                             <ImageButton
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/mini_icon_size"
+                                android:layout_height="@dimen/mini_icon_size"
                                 android:background="@color/transperant"
                                 android:padding="@dimen/comman_icon_padding"
                                 android:onClick="ShareIt"
@@ -188,6 +208,234 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/cardview_margin"
+                app:cardCornerRadius="10sp"
+                app:contentPadding="@dimen/card_view_padding">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@color/heading_bg_color"
+                            android:gravity="center_horizontal"
+                            android:text="@string/k_bare_me"
+                            android:textColor="@color/title_color"
+                            android:textSize="@dimen/title_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/naam"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size" />
+
+                        <TextView
+                            android:id="@+id/view_name_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dot"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/gotr"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size" />
+
+                        <TextView
+                            android:id="@+id/view_gotr"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:onClick="MemberCast"
+                            android:text="@string/dot"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/gender"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size" />
+
+                        <TextView
+                            android:id="@+id/view_gender"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dot"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dob"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size" />
+
+                        <TextView
+                            android:id="@+id/view_dob"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dot"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/view_death_date_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/mrn_tithi"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size" />
+
+                        <TextView
+                            android:id="@+id/view_death_date"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dot"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/vevahik_sthiti"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size" />
+
+                        <TextView
+                            android:id="@+id/view_marriage_status"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dot"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/sheksnik_yogyta"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size" />
+
+                        <TextView
+                            android:id="@+id/view_education"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dot"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/work"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size" />
+
+                        <TextView
+                            android:id="@+id/view_work"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dot"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="@dimen/cardview_margin"
                 app:cardCornerRadius="10sp"
                 app:contentPadding="@dimen/card_view_padding"
@@ -198,28 +446,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="@dimen/card_view_padding">
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/dob"/>
-                        <TextView
-                            android:id="@+id/view_dob"
-                            android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/dob"/>
+                            android:background="@color/heading_bg_color"
+                            android:gravity="center_horizontal"
+                            android:text="@string/pita"
+                            android:textColor="@color/title_color"
+                            android:textSize="@dimen/title_size" />
+
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -233,105 +475,100 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/gender"/>
+                            android:text="@string/pita_ka_naam"/>
                         <TextView
-                            android:id="@+id/view_gender"
+                            android:id="@+id/view_pita_ka_naam"
                             android:layout_width="0dp"
                             android:layout_weight="1"
+                            android:onClick="FnameClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/gender"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="@dimen/card_view_padding">
-
-                        <TextView
-                            android:id="@+id/view_death_date_name"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/mrn_tithi"/>
-                        <TextView
-                            android:id="@+id/view_death_date"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/mrn_tithi"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="@dimen/card_view_padding">
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/pita_ki_gotr"
                             android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/sheksnik_yogyta"/>
-                        <TextView
-                            android:id="@+id/view_education"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/sheksnik_yogyta"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="@dimen/card_view_padding">
+                            android:textSize="@dimen/text_size" />
 
                         <TextView
+                            android:id="@+id/view_gotr_1"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/mobile_no"/>
-                        <TextView
-                            android:id="@+id/view_mobile_no"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/mobile_no"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="@dimen/card_view_padding">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/gotr"/>
-                        <TextView
-                            android:id="@+id/view_gotr"
-                            android:layout_width="0dp"
                             android:layout_weight="1"
                             android:onClick="MemberCast"
+                            android:text="@string/dot"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="@dimen/card_view_padding">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size"
+                            android:text="@string/pita_ka_ganv"/>
+                        <TextView
+                            android:id="@+id/view_pita_ka_ganv"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:onClick="FVilalgeClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/gotr"/>
+                            android:text="@string/dot"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/cardview_margin"
+                app:cardCornerRadius="10sp"
+                app:contentPadding="@dimen/card_view_padding"
+                android:layout_gravity="center"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/card_view_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@color/heading_bg_color"
+                            android:gravity="center_horizontal"
+                            android:text="@string/mata_ji"
+                            android:textColor="@color/title_color"
+                            android:textSize="@dimen/title_size" />
+
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -345,15 +582,16 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/work"/>
+                            android:text="@string/mata_ka_naam"/>
                         <TextView
-                            android:id="@+id/view_work"
+                            android:id="@+id/view_mata_ka_naam"
                             android:layout_width="0dp"
                             android:layout_weight="1"
+                            android:onClick="MNameClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/work"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -367,15 +605,16 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/vevahik_sthiti"/>
+                            android:text="@string/mata_ki_gotr"/>
                         <TextView
-                            android:id="@+id/view_marriage_status"
+                            android:id="@+id/view_mata_ki_gotr"
                             android:layout_width="0dp"
                             android:layout_weight="1"
+                            android:onClick="MCastClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/vevahik_sthiti"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -389,86 +628,18 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/ganv"/>
+                            android:text="@string/mata_ka_ganv"/>
                         <TextView
-                            android:id="@+id/view_ganv"
+                            android:id="@+id/view_mata_ka_ganv"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:onClick="VillageClick"
+                            android:onClick="MVillageClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/ganv"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="@dimen/card_view_padding">
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/tahsil"/>
-                        <TextView
-                            android:id="@+id/view_tahsil"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:onClick="TahsilClick"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/tahsil"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="@dimen/card_view_padding">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/jila"/>
-                        <TextView
-                            android:id="@+id/view_jila"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:onClick="DistrictClick"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/jila"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="@dimen/card_view_padding">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/rajy"/>
-                        <TextView
-                            android:id="@+id/view_state"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:onClick="StateClick"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/rajy"/>
-                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -499,8 +670,9 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/mini_title_text"
+                            android:textColor="@color/title_color"
+                            android:background="@color/heading_bg_color"
+                            android:textSize="@dimen/title_size"
                             android:gravity="center_horizontal"
                             android:text="@string/past_wife"/>
 
@@ -508,120 +680,120 @@
 
                     <!---->
                     <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_margin="@dimen/card_view_padding">-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_margin="@dimen/card_view_padding">-->
 
-                        <!--<TextView-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:textColor="@color/text_color"-->
-                            <!--android:textSize="@dimen/text_size"-->
-                            <!--android:text="@string/patni_ka_naam"/>-->
-                        <!--<TextView-->
-                            <!--android:id="@+id/view_past_wife_name"-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:textColor="@color/colorAccent"-->
-                            <!--android:textSize="@dimen/text_size"-->
-                            <!--android:text="@string/patni_ka_naam"/>-->
+                    <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/text_color"-->
+                    <!--android:textSize="@dimen/text_size"-->
+                    <!--android:text="@string/patni_ka_naam"/>-->
+                    <!--<TextView-->
+                    <!--android:id="@+id/view_past_wife_name"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/colorAccent"-->
+                    <!--android:textSize="@dimen/text_size"-->
+                    <!--android:text="@string/patni_ka_naam"/>-->
                     <!--</LinearLayout>-->
                     <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_margin="@dimen/card_view_padding">-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_margin="@dimen/card_view_padding">-->
 
-                        <!--<TextView-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:textColor="@color/text_color"-->
-                            <!--android:textSize="@dimen/text_size"-->
-                            <!--android:text="@string/patni_ka_gotr"/>-->
-                        <!--<TextView-->
-                            <!--android:id="@+id/view_past_wife_cast"-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:textColor="@color/colorAccent"-->
-                            <!--android:textSize="@dimen/text_size"-->
-                            <!--android:text="@string/patni_ka_gotr"/>-->
+                    <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/text_color"-->
+                    <!--android:textSize="@dimen/text_size"-->
+                    <!--android:text="@string/patni_ka_gotr"/>-->
+                    <!--<TextView-->
+                    <!--android:id="@+id/view_past_wife_cast"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/colorAccent"-->
+                    <!--android:textSize="@dimen/text_size"-->
+                    <!--android:text="@string/patni_ka_gotr"/>-->
                     <!--</LinearLayout>-->
                     <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_margin="@dimen/card_view_padding">-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_margin="@dimen/card_view_padding">-->
 
-                        <!--<TextView-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:textColor="@color/text_color"-->
-                            <!--android:textSize="@dimen/text_size"-->
-                            <!--android:text="@string/patni_ka_ganv"/>-->
-                        <!--<TextView-->
-                            <!--android:id="@+id/view_past_wife_village"-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:textColor="@color/colorAccent"-->
-                            <!--android:textSize="@dimen/text_size"-->
-                            <!--android:text="@string/patni_ka_ganv"/>-->
+                    <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/text_color"-->
+                    <!--android:textSize="@dimen/text_size"-->
+                    <!--android:text="@string/patni_ka_ganv"/>-->
+                    <!--<TextView-->
+                    <!--android:id="@+id/view_past_wife_village"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/colorAccent"-->
+                    <!--android:textSize="@dimen/text_size"-->
+                    <!--android:text="@string/patni_ka_ganv"/>-->
                     <!--</LinearLayout>-->
                     <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_margin="@dimen/card_view_padding">-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_margin="@dimen/card_view_padding">-->
 
-                        <!--<TextView-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:textColor="@color/text_color"-->
-                            <!--android:textSize="@dimen/text_size"-->
-                            <!--android:text="@string/shadi_ki_tihi"/>-->
-                        <!--<TextView-->
-                            <!--android:id="@+id/view_past_wife_marry_date"-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:textColor="@color/colorAccent"-->
-                            <!--android:textSize="@dimen/text_size"-->
-                            <!--android:text="@string/shadi_ki_tihi"/>-->
+                    <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/text_color"-->
+                    <!--android:textSize="@dimen/text_size"-->
+                    <!--android:text="@string/shadi_ki_tihi"/>-->
+                    <!--<TextView-->
+                    <!--android:id="@+id/view_past_wife_marry_date"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/colorAccent"-->
+                    <!--android:textSize="@dimen/text_size"-->
+                    <!--android:text="@string/shadi_ki_tihi"/>-->
                     <!--</LinearLayout>-->
                     <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="vertical">-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="vertical">-->
 
-                        <!--<LinearLayout-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:orientation="horizontal"-->
-                            <!--android:layout_margin="@dimen/card_view_padding">-->
+                    <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_margin="@dimen/card_view_padding">-->
 
-                            <!--<TextView-->
-                                <!--android:layout_width="0dp"-->
-                                <!--android:layout_weight="1"-->
-                                <!--android:layout_height="wrap_content"-->
-                                <!--android:textColor="@color/text_color"-->
-                                <!--android:textSize="@dimen/mini_title_text"-->
-                                <!--android:text="@string/beta_beti"-->
-                                <!--android:gravity="center_horizontal"/>-->
+                    <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/text_color"-->
+                    <!--android:textSize="@dimen/mini_title_text"-->
+                    <!--android:text="@string/beta_beti"-->
+                    <!--android:gravity="center_horizontal"/>-->
 
-                        <!--</LinearLayout>-->
+                    <!--</LinearLayout>-->
 
-                        <!--<ListView-->
-                            <!--android:id="@+id/past_wife_child"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="0dp"-->
-                            <!--android:layout_weight="1" />-->
+                    <!--<ListView-->
+                    <!--android:id="@+id/past_wife_child"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:layout_weight="1" />-->
 
 
                     <!--</LinearLayout>-->
@@ -659,8 +831,9 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/mini_title_text"
+                            android:textColor="@color/title_color"
+                            android:background="@color/heading_bg_color"
+                            android:textSize="@dimen/title_size"
                             android:gravity="center_horizontal"
                             android:text="@string/jiwan_sathi_patni"/>
 
@@ -686,7 +859,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/patni_ka_naam"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -709,7 +882,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/patni_ka_gotr"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -732,7 +905,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/patni_ka_ganv"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -754,7 +927,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/shadi_ki_tihi"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -771,13 +944,42 @@
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/text_color"
-                                android:textSize="@dimen/mini_title_text"
+                                android:textColor="@color/title_color"
+                                android:background="@color/heading_bg_color"
+                                android:textSize="@dimen/title_size"
                                 android:text="@string/beta_beti"
                                 android:gravity="center_horizontal"/>
 
                         </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_margin="@dimen/card_view_padding">
 
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="2"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_color"
+                                android:textSize="@dimen/text_size"
+                                android:text="@string/naam"/>
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="0.8"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_color"
+                                android:textSize="@dimen/text_size"
+                                android:text="@string/gender"/>
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="1.2"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_color"
+                                android:textSize="@dimen/text_size"
+                                android:text="@string/ganv"/>
+
+                        </LinearLayout>
                         <ListView
                             android:id="@+id/view_current_partner_child"
                             android:layout_width="match_parent"
@@ -792,12 +994,14 @@
 
             </android.support.v7.widget.CardView>
             <android.support.v7.widget.CardView
+                android:id="@+id/view_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/cardview_margin"
                 app:cardCornerRadius="10sp"
                 app:contentPadding="@dimen/card_view_padding"
                 android:layout_gravity="center"
+                android:visibility="visible"
                 >
 
                 <LinearLayout
@@ -815,18 +1019,35 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
-                            android:textSize="@dimen/text_size"
-                            android:text="@string/pita_ka_naam"/>
+                            android:textColor="@color/title_color"
+                            android:background="@color/heading_bg_color"
+                            android:textSize="@dimen/title_size"
+                            android:gravity="center_horizontal"
+                            android:text="@string/address"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="@dimen/card_view_padding">
+
                         <TextView
-                            android:id="@+id/view_pita_ka_naam"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:onClick="FnameClick"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_color"
+                            android:textSize="@dimen/text_size"
+                            android:text="@string/mobile_no"/>
+                        <TextView
+                            android:id="@+id/view_mobile_no"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/pita_ka_naam"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -840,16 +1061,16 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/pita_ka_ganv"/>
+                            android:text="@string/ganv"/>
                         <TextView
-                            android:id="@+id/view_pita_ka_ganv"
+                            android:id="@+id/view_ganv"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:onClick="FVilalgeClick"
+                            android:onClick="VillageClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/pita_ka_ganv"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -863,16 +1084,16 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/mata_ka_naam"/>
+                            android:text="@string/tahsil"/>
                         <TextView
-                            android:id="@+id/view_mata_ka_naam"
+                            android:id="@+id/view_tahsil"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:onClick="MNameClick"
+                            android:onClick="TahsilClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/mata_ka_naam"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -886,16 +1107,16 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/mata_ki_gotr"/>
+                            android:text="@string/jila"/>
                         <TextView
-                            android:id="@+id/view_mata_ki_gotr"
+                            android:id="@+id/view_jila"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:onClick="MCastClick"
+                            android:onClick="DistrictClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/mata_ki_gotr"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -909,18 +1130,17 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/mata_ka_ganv"/>
+                            android:text="@string/rajy"/>
                         <TextView
-                            android:id="@+id/view_mata_ka_ganv"
+                            android:id="@+id/view_state"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:onClick="MVillageClick"
+                            android:onClick="StateClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"
-                            android:text="@string/mata_ka_ganv"/>
+                            android:text="@string/dot"/>
                     </LinearLayout>
-
 
                 </LinearLayout>
 
@@ -956,7 +1176,6 @@
                             android:id="@+id/last_edited"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:onClick="FnameClick"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/text_size"

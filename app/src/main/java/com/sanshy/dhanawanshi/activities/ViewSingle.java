@@ -38,7 +38,7 @@ public class ViewSingle extends AppCompatActivity {
     String Mid;
 
     ImageView ProfilePhoto;
-    TextView MName,DOB,DOD,Gender,Mobile,Cast,Work,MarriageStatus, MVillage, MTahsil,MEducation,DODName;
+    TextView MName,MName1,DOB,DOD,Gender,Mobile,Cast,Cast1,Work,MarriageStatus, MVillage, MTahsil,MEducation,DODName;
     TextView MDistrict, MState, MCurrentPartnerName, MCurrentPartnerVillage, MCurrentPartnerCast, CurrentMarriageDate, MFatherName, MFatherVillage, MMotherName, MMotherVillage, MMotherCast;
     TextView LastEdited;
     CardView PastPartnerCard,CurrentPartnerCard;
@@ -73,6 +73,7 @@ public class ViewSingle extends AppCompatActivity {
 
         ProfilePhoto = findViewById(R.id.profile_image);
         MName = findViewById(R.id.view_name);
+        MName1 = findViewById(R.id.view_name_1);
         DOB = findViewById(R.id.view_dob);
         DOD = findViewById(R.id.view_death_date);
         MEducation = findViewById(R.id.view_education);
@@ -80,6 +81,7 @@ public class ViewSingle extends AppCompatActivity {
         Gender = findViewById(R.id.view_gender);
         Mobile = findViewById(R.id.view_mobile_no);
         Cast = findViewById(R.id.view_gotr);
+        Cast1 = findViewById(R.id.view_gotr_1);
         Work = findViewById(R.id.view_work);
         MarriageStatus = findViewById(R.id.view_marriage_status);
         MVillage = findViewById(R.id.view_ganv);
@@ -183,6 +185,7 @@ public class ViewSingle extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()){
                     FillPreData(documentSnapshot);
+                    ProfilePhoto.requestFocus();
                     ST.HideProgress();
                 }else{
                     ST.HideProgress();
@@ -213,6 +216,7 @@ public class ViewSingle extends AppCompatActivity {
         if (documentSnapshot.contains(ST.MEMBER_NAME)){
             MemberNameSt = (String) documentSnapshot.get(ST.MEMBER_NAME);
             MName.setText(MemberNameSt);
+            MName1.setText(MemberNameSt);
         }
         if (documentSnapshot.contains(ST.EDUCATION_STATUS)){
             EducationSt = (String) documentSnapshot.get(ST.EDUCATION_STATUS);
@@ -223,8 +227,10 @@ public class ViewSingle extends AppCompatActivity {
             Gender.setText(isMale?getString(R.string.purush):getString(R.string.mahila));
         }
         if (documentSnapshot.contains(ST.DOB)){
-            DOB.setText(ST.DateToString((Date) documentSnapshot.get(ST.DOB)));
             BirthDate = (Date) documentSnapshot.get(ST.DOB);
+            DOB.setText(ST.DateToString((Date) documentSnapshot.get(ST.DOB))+" ("+ST.getAge(BirthDate,new Date())+")");
+
+
         }
         if (documentSnapshot.contains(ST.IS_ALIVE)){
             isAlive = (boolean) documentSnapshot.get(ST.IS_ALIVE);
@@ -238,8 +244,11 @@ public class ViewSingle extends AppCompatActivity {
         }
         if (documentSnapshot.contains(ST.DOD)){
             DOD.setText(ST.DateToString((Date) documentSnapshot.get(ST.DOD)));
-            DOD.setVisibility(View.VISIBLE);
-            DODName.setVisibility(View.VISIBLE);
+            if (!isAlive){
+                DOB.setText(ST.DateToString(BirthDate)+" ("+ST.getAge(BirthDate,(Date) documentSnapshot.get(ST.DOD))+")");
+            }
+//            DOD.setVisibility(View.VISIBLE);
+//            DODName.setVisibility(View.VISIBLE);
         }
         if (documentSnapshot.contains(ST.STATE)){
             MStateSt = (String)documentSnapshot.get(ST.STATE);
@@ -268,6 +277,7 @@ public class ViewSingle extends AppCompatActivity {
         if (documentSnapshot.contains(ST.CAST)){
             MCastSt = (String) documentSnapshot.get(ST.CAST);
             Cast.setText(MCastSt);
+            Cast1.setText(MCastSt);
         }
         if (documentSnapshot.contains(ST.WORK)){
             WorkList = (ArrayList<String>) documentSnapshot.get(ST.WORK);
@@ -534,9 +544,11 @@ public class ViewSingle extends AppCompatActivity {
         EnteredEditingKey = "";
         inputEditingKey = new EditText(this);
         inputEditingKey.setInputType(InputType.TYPE_CLASS_NUMBER);
+        inputEditingKey.setHint(getString(R.string.smpadit_kunji_request));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle(getString(R.string.editing_key));
+        builder.setMessage(getString(R.string.please)+" "+LastEdited.getText().toString()+" "+getString(R.string.sampadit)+" "+LastEdited.getText().toString()+" "+getString(R.string.last_string)+getString(R.string.wrong_input));
         builder.setView(inputEditingKey);
         builder.setPositiveButton(getString(R.string.thik), new DialogInterface.OnClickListener() {
             @Override
@@ -546,7 +558,7 @@ public class ViewSingle extends AppCompatActivity {
                     startEditing();
                 }
                 else{
-                    ST.ShowDialog(ViewSingle.this,getString(R.string.wrong_input));
+                    ST.ShowDialog(ViewSingle.this,getString(R.string.please)+" "+LastEdited.getText().toString()+" "+getString(R.string.sampadit)+" "+LastEdited.getText().toString()+" "+getString(R.string.last_string)+getString(R.string.wrong_input));
                 }
 
             }

@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class ST {
     public static final String MEMBER_ID = "MemberId";
@@ -334,7 +335,21 @@ public class ST {
 
         return true;
     }
-
+    public static int getAge(Date fromDate, Date toDate){
+        Calendar a = getCalendar(fromDate);
+        Calendar b = getCalendar(toDate);
+        int diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR);
+        if (a.get(Calendar.MONTH)> b.get(Calendar.MONTH)||
+                (a.get(Calendar.MONTH)==b.get(Calendar.MONTH)&&a.get(Calendar.DATE)>b.get(Calendar.DATE))){
+            diff--;
+        }
+        return diff;
+    }
+    public static Calendar getCalendar(Date date){
+        Calendar cal = Calendar.getInstance(Locale.US);
+        cal.setTime(date);
+        return cal;
+    }
     public static String GenerateId(Date date, String Name, String Village){
 
         return date.getTime()+"_"+mUid+"_"+Name.replaceAll("\\s+","_")+"_"+Village.replaceAll("\\s+","_");

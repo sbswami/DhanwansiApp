@@ -969,8 +969,8 @@ public class EditActivity extends AppCompatActivity {
             FirstRelationId = (String) documentSnapshot.get(ST.FIRST_RELATION_ID);
         }
         if (documentSnapshot.contains(ST.EDITORS_LIST)){
-            ArrayList<String> editorList = (ArrayList<String>) documentSnapshot.get(ST.EDITORS_LIST);
-            if (!editorList.contains(ST.mUid)){
+            EditorsList = (ArrayList<String>) documentSnapshot.get(ST.EDITORS_LIST);
+            if (!EditorsList.contains(ST.mUid)){
                 EditorsList.add(ST.mUid);
             }
 
@@ -1977,6 +1977,16 @@ public class EditActivity extends AppCompatActivity {
             MemberCompleteDataMap.put(ST.CURRENT_PARTNER_NAME,CurrentPartnerNameSt);
             MemberCompleteDataMap.put(ST.CURRENT_PARTNER_ID,CurrentPartnerIdSt);
             ArrayList<Map<String,Object>> ChildListParents = new ArrayList<>();
+            for (int q = 0; q < ChildList.size(); q++){
+                for (int w = 0; w < ChildList.size(); w++){
+                    if ((q!=w)){
+                        if (ChildList.get(q).getId().equals(ChildList.get(w).getId())){
+                            ChildList.remove(w);
+                            return;
+                        }
+                    }
+                }
+            }
             for (int h = 0; h < ChildList.size(); h++){
                 Map<String, Object> ChildMap = new HashMap<>();
                 ChildMap.put(ST.CHILD_ID,ChildList.get(h).getId());
@@ -1985,6 +1995,7 @@ public class EditActivity extends AppCompatActivity {
                 ChildMap.put(ST.CHILD_IS_MALE,ChildList.get(h).isMale());
                 ChildListParents.add(ChildMap);
             }
+
             MemberCompleteDataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildListParents);
             MemberCompleteDataMap.put(ST.CURRENT_PARTNER_MARRIAGE_DATE,ST.marryDate);
         }
@@ -2210,6 +2221,23 @@ SearchData
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()){
 
+                        Map<String, Object> DataMap = new HashMap<>();
+
+                        ArrayList<Map<String,Object>> ChildListParents = new ArrayList<>();
+                        for (int h = 0; h < ChildList.size(); h++){
+                            Map<String, Object> ChildMap = new HashMap<>();
+                            ChildMap.put(ST.CHILD_ID,ChildList.get(h).getId());
+                            ChildMap.put(ST.CHILD_NAME,ChildList.get(h).getChildName());
+                            ChildMap.put(ST.CHILD_VILLAGE,ChildList.get(h).getChildVillage());
+                            ChildMap.put(ST.CHILD_IS_MALE,ChildList.get(h).isMale());
+                            ChildListParents.add(ChildMap);
+                        }
+
+                        DataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildListParents);
+                        DataMap.put(ST.CURRENT_PARTNER_MARRIAGE_DATE,ST.marryDate);
+
+
+                        ST.CompleteDataSingle(CurrentPartnerIdSt).update(DataMap);
                     }
                     else{
                         String EditingKey = String.valueOf(new Random().nextInt(900000)+100000);
