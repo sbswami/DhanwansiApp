@@ -49,7 +49,7 @@ public class SinglePartnerListAdapter extends ArrayAdapter<SinglePartnerListItem
         listView = rowView.findViewById(R.id.child_list);
         childListAdapter = new SingleChildListAdapter(context,list.getChildListItems());
         listView.setAdapter(childListAdapter);
-
+        ST.setListViewHeightBasedOnChildren(listView);
         Name.setText(list.getPartnerName());
         Cast.setText(list.getPartnerCast());
         Village.setText(list.getPartnerGanv());

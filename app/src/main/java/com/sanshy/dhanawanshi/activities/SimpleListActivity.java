@@ -58,6 +58,11 @@ public class SimpleListActivity extends AppCompatActivity {
                 intent.putExtra(ST.MEMBER_ID,ItemList.get(position).getId());
                 startActivity(intent);
             }
+
+            @Override
+            public void LongPressListener(View v, int position) {
+
+            }
         });
         ListRecyclerView.setAdapter(ListAdapter);
 

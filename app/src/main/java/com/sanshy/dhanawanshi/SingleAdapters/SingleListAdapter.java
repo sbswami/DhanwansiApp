@@ -78,12 +78,20 @@ public class SingleListAdapter extends RecyclerView.Adapter<SingleListAdapter.My
                     onClickListener.PersonListener(v, getAdapterPosition());
                 }
             });
+            SingleCard.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    onClickListener.LongPressListener(v, getAdapterPosition());
+                    return false;
+                }
+            });
         }
     }
 
 
     public interface MyAdapterListener {
         void PersonListener(View v, int position);
+        void LongPressListener(View v, int position);
     }
 
     public SingleListAdapter(ArrayList<SingleListItem> productList, MyAdapterListener onClickListener){

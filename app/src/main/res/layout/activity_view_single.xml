@@ -305,7 +305,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/dot"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size" />
                     </LinearLayout>
 
@@ -329,7 +329,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/dot"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size" />
                     </LinearLayout>
 
@@ -354,7 +354,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/dot"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size" />
                     </LinearLayout>
 
@@ -378,7 +378,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/dot"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size" />
                     </LinearLayout>
 
@@ -402,7 +402,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/dot"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size" />
                     </LinearLayout>
 
@@ -426,7 +426,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/dot"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size" />
                     </LinearLayout>
 
@@ -925,7 +925,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
                             android:text="@string/dot"/>
                     </LinearLayout>
@@ -945,8 +945,8 @@
                                 android:layout_weight="1"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/title_color"
-                                android:background="@color/heading_bg_color"
-                                android:textSize="@dimen/title_size"
+                                android:background="@color/sub_heading_bg_color"
+                                android:textSize="@dimen/mini_title_text"
                                 android:text="@string/beta_beti"
                                 android:gravity="center_horizontal"/>
 
@@ -962,6 +962,7 @@
                                 android:layout_weight="2"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/text_color"
+                                android:textStyle="bold"
                                 android:textSize="@dimen/text_size"
                                 android:text="@string/naam"/>
                             <TextView
@@ -970,6 +971,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/text_color"
                                 android:textSize="@dimen/text_size"
+                                android:textStyle="bold"
                                 android:text="@string/gender"/>
                             <TextView
                                 android:layout_width="0dp"
@@ -977,6 +979,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/text_color"
                                 android:textSize="@dimen/text_size"
+                                android:textStyle="bold"
                                 android:text="@string/ganv"/>
 
                         </LinearLayout>
@@ -1046,6 +1049,7 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
+                            android:onClick="MyMobileDial"
                             android:textSize="@dimen/text_size"
                             android:text="@string/dot"/>
                     </LinearLayout>
@@ -1178,6 +1182,7 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
+                            android:onClick="LastEditMobile"
                             android:textSize="@dimen/text_size"
                             android:text="@string/last_edited"/>
                     </LinearLayout>

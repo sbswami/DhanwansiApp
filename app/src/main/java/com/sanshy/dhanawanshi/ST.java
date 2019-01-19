@@ -99,6 +99,7 @@ public class ST {
     public static final String PAST_PARTNER_VILLAGE = "PastPartnerVillage";
     public static final String PAST_PARTNER_MARRIAGE_DATE = "PastPartnerMarriageDate";
     public static final String PAST_PARTNER_CHILD_LIST = "PastPartnerChildList";
+    public static final String IS_VERIFIED = "isVerified";
 
     public static FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     public static String mUid = ST.currentUser!=null?ST.currentUser.getUid():"000";
@@ -388,7 +389,7 @@ public class ST {
                 view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+            totalHeight = totalHeight + view.getMeasuredHeight() - view.getMeasuredHeight()/4;
         }
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
@@ -408,7 +409,7 @@ public class ST {
                 view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight() - view.getMeasuredHeight()/3;
+            totalHeight += view.getMeasuredHeight();
         }
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
@@ -424,6 +425,9 @@ public class ST {
         builder.setPositiveButton(context.getText(R.string.thik), null);
 
         builder.create().show();
+    }
+    public static void CantChangeDialog(Context context){
+        ST.ShowDialog(context,context.getString(R.string.cant_change_));
     }
     public static void FillInput(Context context){
         ST.ShowDialog(context,context.getString(R.string.please_fill_all_inputs));

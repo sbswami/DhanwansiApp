@@ -44,7 +44,7 @@
     <string name="no_date_selected">कोई तिथि नहीं</string>
     <string name="unmarried">अविवाहित</string>
     <string name="married">विवाहित</string>
-    <string name="save">सहेजे</string>
+    <string name="save">सहेजे / Save</string>
     <string name="cancel">छोड़े</string>
     <string name="purush">पुरुष</string>
     <string name="mahila">महिला</string>
@@ -58,9 +58,9 @@
     <string name="jiwansathi_ka_naam">जीवनसाथी का नाम</string>
     <string name="sadi_tarikh">शादी की तिथि</string>
     <string name="jnm_tithi">जन्म तिथि</string>
-    <string name="beta_beti_jode">बेटा बेटी जोड़े</string>
+    <string name="beta_beti_jode">बेटा बेटी जोड़े +</string>
     <string name="married_after_death">तलाक के बाद दुबारा विवाहित</string>
-    <string name="add_past_jiwansathi">भूतपूर्व जीवनसाथी जोड़े</string>
+    <string name="add_past_jiwansathi">भूतपूर्व जीवनसाथी जोड़े+</string>
     <string name="bche_ka_naam">बच्चे का नाम</string>
     <string name="bache_ka_ling">बच्चे का लिंग</string>
     <string name="bache_ka_ganv">बच्चे का गाँव</string>
@@ -108,14 +108,37 @@
     <string name="gotr_likhen">गोत्र यहाँ लिखें</string>
     <string name="date_fomat">DD/MM/YYYY</string>
     <string name="wasi">वासी</string>
-    <string name="vivahik_sthithi_chune">विवाहिक स्थिति चुने...</string>
+    <string name="vivahik_sthithi_chune">विवाहिक स्थिति चुने : </string>
+    <string name="sheksnik_yogyta_chene">शेक्षणिक योग्यता चुने : </string>
+    <string name="kary_chune">कार्य चुने…</string>
+    <string name="no_saved">बिना सहेजें जाएँ</string>
+    <string name="this_will_not_saved">यह नहीं सहेजा गया</string>
+    <string name="ruken">रुकें</string>
+    <string name="you_cant_change">एक बार Save / सहेजने के बाद आप दुबारा किसी भी व्यक्ति को हटा नहीं सकते हैं| इसलिए Save / सहेजने से पहले फिर सोच लेवें|</string>
+    <string name="please_add_past_partner">कृपया भूतपूर्व जीवनसाथी जोड़े</string>
+    <string name="remove_from_saved_list">क्या आप इसे सुरक्षित सूचि से हटाना चाहते है?</string>
+    <string name="cant_change_">इसे आप नहीं बदल सकते!\n अगर आप इसे बदलना चाहते है तो इस व्यक्ति की जानकारी संपादित व्यक्ति की प्रोफाइल से करें| अगर फिर भी कोई मदद चाहिए तो शिकायत करें|</string>
+    <string name="wrong_single_input">यह गलत चुनाव है|\n आप विवाहित / तलाकसुदा / विधवा / विधुर से वापस अविवाहित नहीं बन सकते है|\n कृपया अन्य कोई चुनाव करें|</string>
+    <string name="wrong_marriage_status">यह गलत चुनाव है| कृपया सही का चुनाव करें| \n आप तलाक या जीवनसाथी की मृत्यु के पश्चात विवाहित है अत: सही जानकारी साझा करें| कोई समस्या के लिए शिकायत या सुझाव में संपर्क करें|</string>
+    <string name="move_to_past_partner">वर्तमान जीवनसाथी को भूतपूर्व जीवनसाथी में स्थानांतरित करें</string>
+    <string name="please_add_to_past">कृपया वर्तमान जीवनसाथी में ना लिखें| भूतपूर्व जीवनसाथी में जोड़ देवें|</string>
+    <string name="cant_change_after_save">जोड़ने के बाद आप इसे संपादित आप संपादित नहीं कर सकतें है|</string>
+    <string name="partner_more_then_one">जीवनसाथी एक से ज्यादा बार मोजूद है|</string>
+    <string name="child_more_then_one">बच्चा एक से ज्यादा बार मोजूद है|</string>
 
     <array name="list_education">
 
-        <item>समय</item>
-        <item>जिंदिगी</item>
-        <item>विकास</item>
-        <item>विनाश</item>
+        <item>कोई नहीं</item>
+        <item>साक्षर</item>
+        <item>पांचवीं पास</item>
+        <item>आठवीं पास</item>
+        <item>दसवीं पास</item>
+        <item>बारहवीं पास</item>
+        <item>स्नातक</item>
+        <item>स्नातकोतर</item>
+        <item>डिप्लोमा</item>
+        <item>प्रोफेशनल डिग्री</item>
+        <item>डॉक्टरेट</item>
     </array>
 
     <array name="list_marriage">

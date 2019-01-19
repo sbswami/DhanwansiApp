@@ -119,10 +119,28 @@
 
                         <TextView
                             android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/title_color"
+                            android:background="@color/sub_heading_bg_color"
+                            android:textSize="@dimen/mini_title_text"
+                            android:text="@string/beta_beti"
+                            android:gravity="center_horizontal"/>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="@dimen/card_view_padding">
+
+                        <TextView
+                            android:layout_width="0dp"
                             android:layout_weight="2"
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
+                            android:textStyle="bold"
                             android:text="@string/naam"/>
                         <TextView
                             android:layout_width="0dp"
@@ -130,6 +148,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
+                            android:textStyle="bold"
                             android:text="@string/gender"/>
                         <TextView
                             android:layout_width="0dp"
@@ -137,6 +156,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
+                            android:textStyle="bold"
                             android:text="@string/ganv"/>
 
                     </LinearLayout>

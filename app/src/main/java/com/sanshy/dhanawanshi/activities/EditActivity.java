@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,15 +67,18 @@ public class EditActivity extends AppCompatActivity {
     public static final int PICK_FROM_CAMERA = 123;
 
     ImageView ProfilePicture;
-    TextView ShowBirthDate,MEducation,MWork,ShowDeathDate,MarryDateShow;
+    TextView ShowBirthDate,MWork,ShowDeathDate,MarryDateShow;
     EditText MName,MMobile1,MMobile2;
     AutoCompleteTextView MState,MDistrict,MTahsil,MVillage,MCast,MFatherVillage,MFatherName,MMotherVillage,MMotherCast,MMotherName;
-    RadioGroup MGender, MarriageStatus,MLife;
+    RadioGroup MGender, MLife;
+//    TextView MEducation;
+//    RadioGroup MarriageStatus;
     RadioButton MMale,MFemale,MAlive,MDead;
-    RadioButton MSingle,MMarried,MDivorced,MWidow,MMarriedAfterWidow,MMarriedAfterDivorced;
-    CardView CurrentPartnerCard;
+//    RadioButton MSingle,MMarried,MDivorced,MWidow,MMarriedAfterWidow,MMarriedAfterDivorced;
+    CardView CurrentPartnerCard,PastPartnerCard,MovePartnerCard;
     LinearLayout DeadContainer;
     Button PastPartnerAdd;
+    Spinner MarriageStatusSpinner,EducationStatusSpinner;
 
 
     AutoCompleteTextView MCurrentPartnerName,MCurrentPartnerVillage,MCurrentPartnerCast;
@@ -98,6 +102,13 @@ public class EditActivity extends AppCompatActivity {
     ArrayList<SuggetionItem> PartnerSuggetionList = new ArrayList<>();
     String Mid = "";
 
+    SinglePartnerListItem CloudPartnerItem;
+    boolean ComeBackPartner = false;
+
+    boolean isFatherFromCloud = false;
+    boolean isMotherFromCloud = false;
+    boolean isCurrentPartnerCloud = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +125,8 @@ public class EditActivity extends AppCompatActivity {
         MMobile1 = findViewById(R.id.m_mobile_1);
         MMobile2 = findViewById(R.id.m_mobile_2);
         PastPartnerAdd = findViewById(R.id.m_past_partner_add);
-        MEducation = findViewById(R.id.m_education);
+        PastPartnerCard = findViewById(R.id.m_past_partner_card);
+//        MEducation = findViewById(R.id.m_education);
         MWork = findViewById(R.id.m_work);
         MState = findViewById(R.id.m_state);
         MDistrict = findViewById(R.id.m_district);
@@ -130,15 +142,17 @@ public class EditActivity extends AppCompatActivity {
         MMotherName = findViewById(R.id.m_mother_name);
         MGender = findViewById(R.id.m_gender);
         MLife = findViewById(R.id.m_life);
-        MarriageStatus = findViewById(R.id.m_marriage_status);
+//        MarriageStatus = findViewById(R.id.m_marriage_status);
         MMale = findViewById(R.id.m_male);
         MFemale = findViewById(R.id.m_female);
-        MSingle = findViewById(R.id.m_single);
-        MMarried = findViewById(R.id.m_married);
-        MDivorced = findViewById(R.id.m_divorced);
-        MWidow = findViewById(R.id.m_widow);
-        MMarriedAfterDivorced = findViewById(R.id.m_second_married_divorced);
-        MMarriedAfterWidow = findViewById(R.id.m_second_married_widow);
+//        MSingle = findViewById(R.id.m_single);
+//        MMarried = findViewById(R.id.m_married);
+//        MDivorced = findViewById(R.id.m_divorced);
+//        MWidow = findViewById(R.id.m_widow);
+        MarriageStatusSpinner = findViewById(R.id.m_marriage_status_spinner);
+        EducationStatusSpinner = findViewById(R.id.m_education_status_spinner);
+//        MMarriedAfterDivorced = findViewById(R.id.m_second_married_divorced);
+//        MMarriedAfterWidow = findViewById(R.id.m_second_married_widow);
         CurrentPartnerCard = findViewById(R.id.m_current_partner);
         MCurrentPartnerName = findViewById(R.id.m_current_partner_name);
         MCurrentPartnerCast = findViewById(R.id.m_current_partner_cast);
@@ -146,7 +160,38 @@ public class EditActivity extends AppCompatActivity {
         DeadContainer = findViewById(R.id.dead_container);
         MPastPartnerList = findViewById(R.id.m_past_wife_list);
         MCurrentChildList = findViewById(R.id.m_current_beta_beti_list);
+        MovePartnerCard = findViewById(R.id.m_move_to_past_partner);
 
+        EducationStatusSt = getResources().getStringArray(R.array.list_education)[0];
+
+
+        EducationStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                EducationStatusSt = getResources().getStringArray(R.array.list_education)[position];
+                isEducation = true;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        EducationStatusSpinner.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MMobile1.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        EducationStatusSpinner.clearFocus();
+                    }
+                    else{
+                        EducationStatusSpinner.requestFocus();
+                    }
+                }
+            }
+        });
 
         MFatherName.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -173,7 +218,7 @@ public class EditActivity extends AppCompatActivity {
         MGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (MName.getText().toString().isEmpty()){
+                if (MName.getText().toString().isEmpty()||MCast.getText().toString().isEmpty()){
                     ST.FillAboveInput(EditActivity.this);
                 }
             }
@@ -182,7 +227,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
-                    if (EducationStatusSt.isEmpty()){
+                    if (MVillage.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         MMobile1.clearFocus();
                     }else{
@@ -195,7 +240,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
-                    if (MName.getText().toString().isEmpty()||MMobile1.getText().toString().isEmpty()){
+                    if (MName.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         MCast.clearFocus();
                     }
@@ -209,7 +254,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
-                    if (WorkSt.isEmpty()){
+                    if (!isCurrentMarryDate||MarryDateShow.getText().toString().equals(getString(R.string.date_fomat))){
                         ST.FillAboveInput(EditActivity.this);
                         MState.clearFocus();
                     }
@@ -266,12 +311,18 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
+                    if (isFatherFromCloud){
+                        ST.CantChangeDialog(EditActivity.this);
+                        MFatherName.clearFocus();
+                        return;
+                    }
                     if (MFatherVillage.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         MFatherName.clearFocus();
                     }
                     else{
                         MFatherName.requestFocus();
+                        loadFatherNameSuggetion();
                     }
                 }
             }
@@ -280,6 +331,11 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
+                    if (isMotherFromCloud){
+                        ST.CantChangeDialog(EditActivity.this);
+                        MMotherCast.clearFocus();
+                        return;
+                    }
                     if (MFatherName.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         MMotherCast.clearFocus();
@@ -294,12 +350,18 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
+                    if (isMotherFromCloud){
+                        ST.CantChangeDialog(EditActivity.this);
+                        MMotherName.clearFocus();
+                        return;
+                    }
                     if (MMotherVillage.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         MMotherName.clearFocus();
                     }
                     else{
                         MMotherName.requestFocus();
+                        loadMotherSuggetion();
                     }
                 }
             }
@@ -308,7 +370,12 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
-                    if (MCast.getText().toString().isEmpty()){
+                    if (isCurrentPartnerCloud){
+                        ST.CantChangeDialog(EditActivity.this);
+                        MCurrentPartnerCast.clearFocus();
+                        return;
+                    }
+                    if (MMotherName.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         MCurrentPartnerCast.clearFocus();
                     }
@@ -322,14 +389,21 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
+                    if (isCurrentPartnerCloud){
+                        ST.CantChangeDialog(EditActivity.this);
+                        MCurrentPartnerName.clearFocus();
+                        return;
+                    }
                     if (MCurrentPartnerVillage.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         MCurrentPartnerName.clearFocus();
                     }
                     else{
                         MCurrentPartnerName.requestFocus();
+                        loadCurrentPartnerSuggetion();
                     }
                 }
+
             }
         });
 
@@ -341,49 +415,58 @@ public class EditActivity extends AppCompatActivity {
         MCurrentChildList.setAdapter(ChildAdapter);
 
 
-        MCurrentChildList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder bbuilder = new AlertDialog.Builder(EditActivity.this);
+        /*
+        Delete Child
+         */
 
-                bbuilder.setTitle(getString(R.string.delete));
-                bbuilder.setMessage(getString(R.string.sure_delete));
-                bbuilder.setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ChildList.remove(position);
-                        ChildAdapter.notifyDataSetChanged();
-                        ST.setListViewHeightBasedOnChildren(MCurrentChildList);
-                        ChildAdapter.notifyDataSetChanged();
-                    }
-                });
-                bbuilder.setNegativeButton(getString(R.string.cancel), null);
+//        MCurrentChildList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+//                AlertDialog.Builder bbuilder = new AlertDialog.Builder(EditActivity.this);
+//
+//                bbuilder.setTitle(getString(R.string.delete));
+//                bbuilder.setMessage(getString(R.string.sure_delete));
+//                bbuilder.setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        ChildList.remove(position);
+//                        ChildAdapter.notifyDataSetChanged();
+//                        ST.setListViewHeightBasedOnChildren(MCurrentChildList);
+//                        ChildAdapter.notifyDataSetChanged();
+//                    }
+//                });
+//                bbuilder.setNegativeButton(getString(R.string.cancel), null);
+//
+//                bbuilder.create().show();
+//            }
+//        });
 
-                bbuilder.create().show();
-            }
-        });
+        /*
+        Delete Past Partner
+        *
+        */
 
-        MPastPartnerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this);
-
-                builder.setTitle(getString(R.string.delete));
-                builder.setMessage(getString(R.string.sure_delete));
-                builder.setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        PartnerList.remove(position);
-                        PartnerAdapter.notifyDataSetChanged();
-                        ST.setListViewHeightBasedOnChildren(MPastPartnerList);
-                        PartnerAdapter.notifyDataSetChanged();
-                    }
-                });
-                builder.setNegativeButton(getString(R.string.cancel), null);
-
-                builder.create().show();
-            }
-        });
+//        MPastPartnerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this);
+//
+//                builder.setTitle(getString(R.string.delete));
+//                builder.setMessage(getString(R.string.sure_delete));
+//                builder.setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        PartnerList.remove(position);
+//                        PartnerAdapter.notifyDataSetChanged();
+//                        ST.setListViewHeightBasedOnChildren(MPastPartnerList);
+//                        PartnerAdapter.notifyDataSetChanged();
+//                    }
+//                });
+//                builder.setNegativeButton(getString(R.string.cancel), null);
+//
+//                builder.create().show();
+//            }
+//        });
 
         
 
@@ -403,16 +486,38 @@ public class EditActivity extends AppCompatActivity {
         });
         MCurrentPartnerName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CurrentPartnerIdSt = CurrentPartnerSuggetionList.get(position).getId();
-                isCurrentPartnerSuggested = true;
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                ST.ShowProgress(EditActivity.this);
+                ST.CompleteDataSingle(CurrentPartnerSuggetionList.get(position).getId())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()){
+                            if (documentSnapshot.contains(ST.CURRENT_PARTNER_ID)){
+                                ST.HideProgress();
+                                if (!documentSnapshot.get(ST.CURRENT_PARTNER_ID).toString().equals(Mid)){
+                                    ST.ShowDialog(EditActivity.this,documentSnapshot.get(ST.CURRENT_PARTNER_NAME).toString()+" और "+documentSnapshot.get(ST.MEMBER_NAME).toString()+" पहले से जीवनसाथी है| अगर यह गलत है तो शिकायत / सुझाव का इस्तेमाल करें|");
+                                    MCurrentPartnerName.setText("");
+                                }else{
+                                    CurrentPartnerIdSt = CurrentPartnerSuggetionList.get(position).getId();
+                                    isCurrentPartnerSuggested = true;
+                                }
+                            }
+                        }
+                    }
+                });
             }
         });
         MFatherVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
-                    if (MVillage.getText().toString().isEmpty()||(MLife.getCheckedRadioButtonId()==R.id.m_dead&&ShowDeathDate.getText().toString().equals(getString(R.string.no_date_selected)))){
+                    if (isFatherFromCloud){
+                        ST.CantChangeDialog(EditActivity.this);
+                        MFatherVillage.clearFocus();
+                        return;
+                    }
+                    if (!isBirthDate||ShowBirthDate.getText().toString().equals(getString(R.string.date_fomat))||(!(MGender.getCheckedRadioButtonId()==R.id.m_male||MGender.getCheckedRadioButtonId()==R.id.m_female)||MName.getText().toString().isEmpty()||MCast.getText().toString().isEmpty())){
                         ST.FillAboveInput(EditActivity.this);
                         MFatherVillage.clearFocus();
                     }
@@ -421,42 +526,7 @@ public class EditActivity extends AppCompatActivity {
                     }
                 }
                 else{
-                    if (MVillage.getText().toString().isEmpty()||(MLife.getCheckedRadioButtonId()==R.id.m_dead&&ShowDeathDate.getText().toString().equals(getString(R.string.no_date_selected)))){
-                        return;
-                    }
-                    ST.ShowProgress(EditActivity.this);
-                    ST.SuggetionList
-                            .whereEqualTo(ST.VILLAGE,MFatherVillage.getText().toString())
-                            .whereEqualTo(ST.CAST,MCast.getText().toString())
-                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            FatherSuggetionList.clear();
-                            for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
-                                try{
-                                    FatherSuggetionList.add(new SuggetionItem(
-                                            documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
-                                            documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
-                                            documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
-                                            documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
-                                    ));
-                                }catch (NullPointerException ex){}
-                            }
 
-                            FatherSuggetionAdapter = new SuggestionAdapter(EditActivity.this,FatherSuggetionList);
-                            MFatherName.setAdapter(FatherSuggetionAdapter);
-                            
-                            ST.HideProgress();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            ST.ShowDialog(EditActivity.this,e.toString());
-                            ST.HideProgress();
-                        }
-                    });
                 }
             }
         });
@@ -465,6 +535,11 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
+                    if (isMotherFromCloud){
+                        ST.CantChangeDialog(EditActivity.this);
+                        MMotherVillage.clearFocus();
+                        return;
+                    }
                     if (MMotherCast.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         MMotherVillage.clearFocus();
@@ -474,40 +549,7 @@ public class EditActivity extends AppCompatActivity {
                     }
                 }
                 else{
-                    if (MMotherCast.getText().toString().isEmpty()){
-                        return;
-                    }
-                    ST.ShowProgress(EditActivity.this);
-                    ST.SuggetionList
-                            .whereEqualTo(ST.VILLAGE,MMotherVillage.getText().toString())
-                            .whereEqualTo(ST.CAST,MMotherCast.getText().toString())
-                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            MotherSuggetionList.clear();
-                            for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
-                                try{
-                                    MotherSuggetionList.add(new SuggetionItem(
-                                            documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
-                                            documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
-                                            documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
-                                            documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
-                                    ));
-                                }catch (NullPointerException ex){}
-                            }
-                            MotherSuggetionAdapter = new SuggestionAdapter(EditActivity.this,MotherSuggetionList);
-                            MMotherName.setAdapter(MotherSuggetionAdapter);
-                            ST.HideProgress();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            ST.ShowDialog(EditActivity.this,e.toString());
-                            ST.HideProgress();
-                        }
-                    });
+
                 }
             }
         });
@@ -515,6 +557,11 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
+                    if (isCurrentPartnerCloud){
+                        ST.CantChangeDialog(EditActivity.this);
+                        MCurrentPartnerVillage.clearFocus();
+                        return;
+                    }
                     if (MCurrentPartnerCast.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         MCurrentPartnerVillage.clearFocus();
@@ -523,41 +570,7 @@ public class EditActivity extends AppCompatActivity {
                         MCurrentPartnerVillage.requestFocus();
                     }
                 }else{
-                    if (MCurrentPartnerCast.getText().toString().isEmpty()){
-                        return;
-                    }
-                    ST.ShowProgress(EditActivity.this);
-                    ST.SuggetionList
-                            .whereEqualTo(ST.VILLAGE,MCurrentPartnerVillage.getText().toString())
-                            .whereEqualTo(ST.CAST,MCurrentPartnerCast.getText().toString())
-                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            CurrentPartnerSuggetionList.clear();
-                            for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
-                                try{
-                                    CurrentPartnerSuggetionList.add(new SuggetionItem(
-                                            documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
-                                            documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
-                                            documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
-                                            documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
-                                    ));
-                                }catch (NullPointerException ex){}
-                            }
-                            CurrentPartnerSuggetionAdapter = new SuggestionAdapter(EditActivity.this,CurrentPartnerSuggetionList);
-                            MCurrentPartnerName.setAdapter(CurrentPartnerSuggetionAdapter);
 
-                            ST.HideProgress();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            ST.ShowDialog(EditActivity.this,e.toString());
-                            ST.HideProgress();
-                        }
-                    });
                 }
             }
         });
@@ -627,68 +640,233 @@ public class EditActivity extends AppCompatActivity {
                 });
             }
         });
-        MarriageStatus.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        MarriageStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (MMotherName.getText().toString().isEmpty()){
-                    ST.FillAboveInput(EditActivity.this);
-                    MarriageStatus.clearFocus();
-                    return;
-                }
-                switch (checkedId){
-                    case R.id.m_single:
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                switch (position){
+                    case 0:
+                        if (intialPositionMarriageStatus>0){
+                            MarriageStatusSpinner.setSelection(intialPositionMarriageStatus);
+                            ST.ShowDialog(EditActivity.this,getString(R.string.wrong_single_input));
+                            return;
+                        }
+                        MovePartnerCard.setVisibility(View.GONE);
                         CurrentPartnerCard.setVisibility(View.GONE);
                         PastPartnerAdd.setVisibility(View.GONE);
+                        PastPartnerCard.setVisibility(View.GONE);
                         MPastPartnerList.setVisibility(View.GONE);
+                        isSingle = true;
+                        isMarried = false;
+                        isDivorced = false;
+                        isWidow = false;
+                        isMarriedAfterPartnerDeath = false;
+                        isMarriedAfterDivorcedWithPartner = false;
                         break;
-                    case R.id.m_married:
+                    case 1:
+                        if (intialPositionMarriageStatus>1){
+                            MarriageStatusSpinner.setSelection(intialPositionMarriageStatus);
+                            ST.ShowDialog(EditActivity.this,getString(R.string.wrong_marriage_status));
+                            return;
+                        }
+                        if (ComeBackPartner){
+                            CurrentPartnerIdSt = CloudPartnerItem.getPartnerId();
+                            ST.marryDate = CloudPartnerItem.getDate();
+                            MarryDateShow.setText(ST.DateToString(ST.marryDate));
+                            isCurrentMarryDate = true;
+                            MCurrentPartnerCast.setText(CloudPartnerItem.getPartnerCast());
+                            MCurrentPartnerName.setText(CloudPartnerItem.getPartnerName());
+                            MCurrentPartnerVillage.setText(CloudPartnerItem.getPartnerGanv());
+                            ChildList.clear();
+                            ChildList.addAll(CloudPartnerItem.getChildListItems());
+                            ChildAdapter.notifyDataSetChanged();
+                            ST.setListViewHeightBasedOnChildren(MCurrentChildList);
+                            isCurrentPartnerCloud = true;
+                            isCurrentPartnerSuggested = true;
+                            ComeBackPartner = false;
+                            PartnerList.clear();
+                            PartnerAdapter.notifyDataSetChanged();
+                            ST.setListViewHeightBasedOnPartner(MPastPartnerList);
+                        }
+
+                        MovePartnerCard.setVisibility(View.GONE);
                         CurrentPartnerCard.setVisibility(View.VISIBLE);
                         PastPartnerAdd.setVisibility(View.GONE);
+                        PastPartnerCard.setVisibility(View.GONE);
                         MPastPartnerList.setVisibility(View.GONE);
+
+                        isSingle = false;
+                        isMarried = true;
+                        isDivorced = false;
+                        isWidow = false;
+                        isMarriedAfterPartnerDeath = false;
+                        isMarriedAfterDivorcedWithPartner = false;
                         break;
-                    case R.id.m_divorced:
-                        CurrentPartnerCard.setVisibility(View.GONE);
-                        PastPartnerAdd.setVisibility(View.VISIBLE);
-                        MPastPartnerList.setVisibility(View.VISIBLE);
+                    case 2:
+                        if (intialPositionMarriageStatus==1||intialPositionMarriageStatus==4||intialPositionMarriageStatus==5){
+                            MovePartnerCard.setVisibility(View.VISIBLE);
+                            CurrentPartnerCard.setVisibility(View.VISIBLE);
+                            PastPartnerAdd.setVisibility(View.VISIBLE);
+                            PastPartnerCard.setVisibility(View.VISIBLE);
+                            MPastPartnerList.setVisibility(View.VISIBLE);
+                            isSingle = false;
+                            isMarried = false;
+                            isDivorced = true;
+                            isWidow = false;
+                            isMarriedAfterPartnerDeath = false;
+                            isMarriedAfterDivorcedWithPartner = false;
+                        }
+                        else{
+                            MovePartnerCard.setVisibility(View.GONE);
+                            CurrentPartnerCard.setVisibility(View.GONE);
+                            PastPartnerAdd.setVisibility(View.VISIBLE);
+                            PastPartnerCard.setVisibility(View.VISIBLE);
+                            MPastPartnerList.setVisibility(View.VISIBLE);
+                            isSingle = false;
+                            isMarried = false;
+                            isDivorced = true;
+                            isWidow = false;
+                            isMarriedAfterPartnerDeath = false;
+                            isMarriedAfterDivorcedWithPartner = false;
+                            AddPartner(PastPartnerAdd);
+                        }
                         break;
-                    case R.id.m_widow:
-                        CurrentPartnerCard.setVisibility(View.GONE);
-                        PastPartnerAdd.setVisibility(View.VISIBLE);
-                        MPastPartnerList.setVisibility(View.VISIBLE);
+                    case 3:
+                        if (intialPositionMarriageStatus==1||intialPositionMarriageStatus==4||intialPositionMarriageStatus==5){
+                            MovePartnerCard.setVisibility(View.VISIBLE);
+                            CurrentPartnerCard.setVisibility(View.VISIBLE);
+                            PastPartnerAdd.setVisibility(View.VISIBLE);
+                            PastPartnerCard.setVisibility(View.VISIBLE);
+                            MPastPartnerList.setVisibility(View.VISIBLE);
+                            isSingle = false;
+                            isMarried = false;
+                            isDivorced = false;
+                            isWidow = true;
+                            isMarriedAfterPartnerDeath = false;
+                            isMarriedAfterDivorcedWithPartner = false;
+                        }
+                        else{
+                            MovePartnerCard.setVisibility(View.GONE);
+                            CurrentPartnerCard.setVisibility(View.GONE);
+                            PastPartnerAdd.setVisibility(View.VISIBLE);
+                            PastPartnerCard.setVisibility(View.VISIBLE);
+                            MPastPartnerList.setVisibility(View.VISIBLE);
+                            isSingle = false;
+                            isMarried = false;
+                            isDivorced = false;
+                            isWidow = true;
+                            isMarriedAfterPartnerDeath = false;
+                            isMarriedAfterDivorcedWithPartner = false;
+                            AddPartner(PastPartnerAdd);
+                        }
                         break;
-                    case R.id.m_second_married_widow:
+                    case 4:
+                        MovePartnerCard.setVisibility(View.VISIBLE);
                         CurrentPartnerCard.setVisibility(View.VISIBLE);
                         PastPartnerAdd.setVisibility(View.VISIBLE);
+                        PastPartnerCard.setVisibility(View.VISIBLE);
                         MPastPartnerList.setVisibility(View.VISIBLE);
+                        isSingle = false;
+                        isMarried = false;
+                        isDivorced = false;
+                        isWidow = false;
+                        isMarriedAfterPartnerDeath = true;
+                        isMarriedAfterDivorcedWithPartner = false;
+//                        AddPartner(PastPartnerAdd);
                         break;
-                    case R.id.m_second_married_divorced:
+                    case 5:
+                        MovePartnerCard.setVisibility(View.VISIBLE);
                         CurrentPartnerCard.setVisibility(View.VISIBLE);
                         PastPartnerAdd.setVisibility(View.VISIBLE);
+                        PastPartnerCard.setVisibility(View.VISIBLE);
                         MPastPartnerList.setVisibility(View.VISIBLE);
+                        isSingle = false;
+                        isMarried = false;
+                        isDivorced = false;
+                        isWidow = false;
+                        isMarriedAfterPartnerDeath = false;
+                        isMarriedAfterDivorcedWithPartner = true;
+//                        AddPartner(PastPartnerAdd);
                         break;
                     default:
                         CurrentPartnerCard.setVisibility(View.GONE);
                         PastPartnerAdd.setVisibility(View.GONE);
+                        PastPartnerCard.setVisibility(View.GONE);
                         MPastPartnerList.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        MarriageStatusSpinner.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    if (MMotherName.getText().toString().isEmpty()){
+                        ST.FillAboveInput(EditActivity.this);
+                        MarriageStatusSpinner.clearFocus();
+                    }else{
+                        MarriageStatusSpinner.requestFocus();
+                    }
                 }
             }
         });
 
+//        MarriageStatus.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                if (MMotherName.getText().toString().isEmpty()){
+//                    ST.FillAboveInput(EditActivity.this);
+//                    MarriageStatus.clearFocus();
+//                    return;
+//                }
+//                switch (checkedId){
+//                    case R.id.m_single:
+//                        CurrentPartnerCard.setVisibility(View.GONE);
+//                        PastPartnerAdd.setVisibility(View.GONE);
+//                        MPastPartnerList.setVisibility(View.GONE);
+//                        break;
+//                    case R.id.m_married:
+//                        CurrentPartnerCard.setVisibility(View.VISIBLE);
+//                        PastPartnerAdd.setVisibility(View.GONE);
+//                        MPastPartnerList.setVisibility(View.GONE);
+//                        break;
+//                    case R.id.m_divorced:
+//                        CurrentPartnerCard.setVisibility(View.GONE);
+//                        PastPartnerAdd.setVisibility(View.VISIBLE);
+//                        MPastPartnerList.setVisibility(View.VISIBLE);
+//                        break;
+//                    case R.id.m_widow:
+//                        CurrentPartnerCard.setVisibility(View.GONE);
+//                        PastPartnerAdd.setVisibility(View.VISIBLE);
+//                        MPastPartnerList.setVisibility(View.VISIBLE);
+//                        break;
+//                    case R.id.m_second_married_widow:
+//                        CurrentPartnerCard.setVisibility(View.VISIBLE);
+//                        PastPartnerAdd.setVisibility(View.VISIBLE);
+//                        MPastPartnerList.setVisibility(View.VISIBLE);
+//                        break;
+//                    case R.id.m_second_married_divorced:
+//                        CurrentPartnerCard.setVisibility(View.VISIBLE);
+//                        PastPartnerAdd.setVisibility(View.VISIBLE);
+//                        MPastPartnerList.setVisibility(View.VISIBLE);
+//                        break;
+//                    default:
+//                        CurrentPartnerCard.setVisibility(View.GONE);
+//                        PastPartnerAdd.setVisibility(View.GONE);
+//                        MPastPartnerList.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+
 
         ST.setListViewHeightBasedOnChildren(MCurrentChildList);
-    }
 
-    ArrayList<String> StateList = new ArrayList<>();
-    ArrayList<String> DistrictList = new ArrayList<>();
-    ArrayList<String> TahsilList = new ArrayList<>();
-    ArrayList<String> VillageList = new ArrayList<>();
 
-    ArrayList<String> CastList = new ArrayList<>();
-    ArrayList<String> VillagesL = new ArrayList<>();
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         ST.ShowProgress(this);
         ST.CompleteDataSingle(Mid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -739,6 +917,137 @@ public class EditActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void loadCurrentPartnerSuggetion() {
+        if (MCurrentPartnerCast.getText().toString().isEmpty()){
+            ST.FillAboveInput(EditActivity.this);
+            return;
+        }
+        ST.ShowProgress(EditActivity.this);
+        ST.SuggetionList
+                .whereEqualTo(ST.VILLAGE,MCurrentPartnerVillage.getText().toString())
+                .whereEqualTo(ST.CAST,MCurrentPartnerCast.getText().toString())
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                CurrentPartnerSuggetionList.clear();
+                for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
+                    try{
+                        CurrentPartnerSuggetionList.add(new SuggetionItem(
+                                documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
+                                documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
+                                documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
+                                documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
+                                documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
+                                documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
+                        ));
+                    }catch (NullPointerException ex){}
+                }
+                CurrentPartnerSuggetionAdapter = new SuggestionAdapter(EditActivity.this,CurrentPartnerSuggetionList);
+                MCurrentPartnerName.setAdapter(CurrentPartnerSuggetionAdapter);
+
+                ST.HideProgress();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                ST.ShowDialog(EditActivity.this,e.toString());
+                ST.HideProgress();
+            }
+        });
+    }
+
+    private void loadFatherNameSuggetion() {
+        if (MVillage.getText().toString().isEmpty()||(MLife.getCheckedRadioButtonId()==R.id.m_dead&&ShowDeathDate.getText().toString().equals(getString(R.string.no_date_selected)))){
+            ST.FillAboveInput(EditActivity.this);
+            return;
+        }
+        ST.ShowProgress(EditActivity.this);
+        ST.SuggetionList
+                .whereEqualTo(ST.VILLAGE,MFatherVillage.getText().toString())
+                .whereEqualTo(ST.CAST,MCast.getText().toString())
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                FatherSuggetionList.clear();
+                for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
+                    try{
+                        FatherSuggetionList.add(new SuggetionItem(
+                                documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
+                                documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
+                                documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
+                                documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
+                                documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
+                                documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
+                        ));
+                    }catch (NullPointerException ex){}
+                }
+
+                FatherSuggetionAdapter = new SuggestionAdapter(EditActivity.this,FatherSuggetionList);
+                MFatherName.setAdapter(FatherSuggetionAdapter);
+
+                ST.HideProgress();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                ST.ShowDialog(EditActivity.this,e.toString());
+                ST.HideProgress();
+            }
+        });
+    }
+
+    private void loadMotherSuggetion() {
+        if (MMotherCast.getText().toString().isEmpty()){
+            ST.FillAboveInput(EditActivity.this);
+            return;
+        }
+        ST.ShowProgress(EditActivity.this);
+        ST.SuggetionList
+                .whereEqualTo(ST.VILLAGE,MMotherVillage.getText().toString())
+                .whereEqualTo(ST.CAST,MMotherCast.getText().toString())
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                MotherSuggetionList.clear();
+                for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
+                    try{
+                        MotherSuggetionList.add(new SuggetionItem(
+                                documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
+                                documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
+                                documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
+                                documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
+                                documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
+                                documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
+                        ));
+                    }catch (NullPointerException ex){}
+                }
+                MotherSuggetionAdapter = new SuggestionAdapter(EditActivity.this,MotherSuggetionList);
+                MMotherName.setAdapter(MotherSuggetionAdapter);
+                ST.HideProgress();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                ST.ShowDialog(EditActivity.this,e.toString());
+                ST.HideProgress();
+            }
+        });
+    }
+
+    ArrayList<String> StateList = new ArrayList<>();
+    ArrayList<String> DistrictList = new ArrayList<>();
+    ArrayList<String> TahsilList = new ArrayList<>();
+    ArrayList<String> VillageList = new ArrayList<>();
+
+    ArrayList<String> CastList = new ArrayList<>();
+    ArrayList<String> VillagesL = new ArrayList<>();
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
 
     }
 
@@ -756,8 +1065,17 @@ public class EditActivity extends AppCompatActivity {
             MName.setText(documentSnapshot.get(ST.MEMBER_NAME).toString());
         }
         if (documentSnapshot.contains(ST.EDUCATION_STATUS)){
-            MEducation.setText(documentSnapshot.get(ST.EDUCATION_STATUS).toString());
             EducationStatusSt = documentSnapshot.get(ST.EDUCATION_STATUS).toString();
+            isEducation = true;
+//            MEducation.setText(EducationStatusSt);
+            String[] EducationArray = getResources().getStringArray(R.array.list_education);
+            for (int l = 0; l < EducationArray.length ; l++){
+                if (EducationStatusSt.equals(EducationArray[l])){
+                    EducationStatusSpinner.setSelection(l);
+                    break;
+                }
+            }
+
         }
         if (documentSnapshot.contains(ST.IS_MALE)){
             if ((boolean) documentSnapshot.get(ST.IS_MALE)){
@@ -826,6 +1144,7 @@ public class EditActivity extends AppCompatActivity {
         if (documentSnapshot.contains(ST.FATHER_ID)){
             FatherIdSt = (String) documentSnapshot.get(ST.FATHER_ID);
             isFatherSuggested = true;
+            isFatherFromCloud = true;
         }
         if (documentSnapshot.contains(ST.MOTHER_VILLAGE)){
             MMotherVillage.setText((String) documentSnapshot.get(ST.MOTHER_VILLAGE));
@@ -839,49 +1158,89 @@ public class EditActivity extends AppCompatActivity {
         if (documentSnapshot.contains(ST.MOTHER_ID)){
             MotherIdSt = (String) documentSnapshot.get(ST.MOTHER_ID);
             isMotherSuggested = true;
+            isMotherFromCloud = true;
         }
         if (documentSnapshot.contains(ST.IS_SINGLE)){
             if ((boolean) documentSnapshot.get(ST.IS_SINGLE))
-                MSingle.setChecked(true);
+            {
+                MarriageStatusSpinner.setSelection(0);
+                intialPositionMarriageStatus = 0;
+                PastPartnerAdd.setVisibility(View.GONE);
+                MovePartnerCard.setVisibility(View.GONE);
+                PastPartnerCard.setVisibility(View.GONE);
+                MPastPartnerList.setVisibility(View.GONE);
+//                MSingle.setChecked(true);
+            }
+            isSingle = (boolean) documentSnapshot.get(ST.IS_SINGLE);
         }
         if (documentSnapshot.contains(ST.IS_MARRIED)){
+            isMarried = (boolean) documentSnapshot.get(ST.IS_MARRIED);
             if ((boolean) documentSnapshot.get(ST.IS_MARRIED))
             {
-                MMarried.setChecked(true);
+                MarriageStatusSpinner.setSelection(1);
+                intialPositionMarriageStatus = 1;
+                PastPartnerAdd.setVisibility(View.GONE);
+                MovePartnerCard.setVisibility(View.GONE);
+                PastPartnerCard.setVisibility(View.GONE);
+                MPastPartnerList.setVisibility(View.GONE);
+//                MMarried.setChecked(true);
                 CurrentPartnerCard.setVisibility(View.VISIBLE);
             }
+
+
         }
         if (documentSnapshot.contains(ST.IS_DIVORCED)){
+            isDivorced = (boolean) documentSnapshot.get(ST.IS_DIVORCED);
             if ((boolean) documentSnapshot.get(ST.IS_DIVORCED))
             {
-                MDivorced.setChecked(true);
+                MarriageStatusSpinner.setSelection(2);
+                intialPositionMarriageStatus = 2;
+//                MDivorced.setChecked(true);
                 PastPartnerAdd.setVisibility(View.VISIBLE);
+                MovePartnerCard.setVisibility(View.VISIBLE);
+                PastPartnerCard.setVisibility(View.VISIBLE);
                 MPastPartnerList.setVisibility(View.VISIBLE);
             }
         }
         if (documentSnapshot.contains(ST.IS_WIDOW)){
+            isWidow = (boolean) documentSnapshot.get(ST.IS_WIDOW);
             if ((boolean) documentSnapshot.get(ST.IS_WIDOW))
             {
-                MWidow.setChecked(true);
+
+                MarriageStatusSpinner.setSelection(3);
+                intialPositionMarriageStatus = 3;
+//                MWidow.setChecked(true);
                 PastPartnerAdd.setVisibility(View.VISIBLE);
+                MovePartnerCard.setVisibility(View.VISIBLE);
+                PastPartnerCard.setVisibility(View.VISIBLE);
                 MPastPartnerList.setVisibility(View.VISIBLE);
             }
         }
         if (documentSnapshot.contains(ST.IS_MARRIED_AFTER_PARTNER_DEATH)){
+            isMarriedAfterPartnerDeath = (boolean) documentSnapshot.get(ST.IS_MARRIED_AFTER_PARTNER_DEATH);
             if ((boolean) documentSnapshot.get(ST.IS_MARRIED_AFTER_PARTNER_DEATH))
             {
-                MMarriedAfterWidow.setChecked(true);
+                MarriageStatusSpinner.setSelection(4);
+                intialPositionMarriageStatus = 4;
+//                MMarriedAfterWidow.setChecked(true);
                 CurrentPartnerCard.setVisibility(View.VISIBLE);
+                MovePartnerCard.setVisibility(View.VISIBLE);
+                PastPartnerCard.setVisibility(View.VISIBLE);
                 PastPartnerAdd.setVisibility(View.VISIBLE);
                 MPastPartnerList.setVisibility(View.VISIBLE);
             }
         }
         if (documentSnapshot.contains(ST.IS_MARRIED_AFTER_DIVORCED_WITH_PARTNER)){
+            isMarriedAfterDivorcedWithPartner = (boolean) documentSnapshot.get(ST.IS_MARRIED_AFTER_DIVORCED_WITH_PARTNER);
             if ((boolean) documentSnapshot.get(ST.IS_MARRIED_AFTER_DIVORCED_WITH_PARTNER))
             {
-                MMarriedAfterDivorced.setChecked(true);
+                MarriageStatusSpinner.setSelection(5);
+                intialPositionMarriageStatus = 5;
+//                MMarriedAfterDivorced.setChecked(true);
                 CurrentPartnerCard.setVisibility(View.VISIBLE);
+                MovePartnerCard.setVisibility(View.VISIBLE);
                 PastPartnerAdd.setVisibility(View.VISIBLE);
+                PastPartnerCard.setVisibility(View.VISIBLE);
                 MPastPartnerList.setVisibility(View.VISIBLE);
             }
         }
@@ -902,7 +1261,10 @@ public class EditActivity extends AppCompatActivity {
         }
         if (documentSnapshot.contains(ST.CURRENT_PARTNER_ID)){
             CurrentPartnerIdSt = (String) documentSnapshot.get(ST.CURRENT_PARTNER_ID);
-            isCurrentPartnerSuggested = true;
+            if (!CurrentPartnerIdSt.isEmpty()){
+                isCurrentPartnerSuggested = true;
+                isCurrentPartnerCloud = true;
+            }
         }
         if (documentSnapshot.contains(ST.CURRENT_PARTNER_CHILD_LIST)){
             ArrayList<Map<String,Object>> CloudCurrentPartnerChildList = (ArrayList<Map<String, Object>>) documentSnapshot.get(ST.CURRENT_PARTNER_CHILD_LIST);
@@ -1041,12 +1403,10 @@ public class EditActivity extends AppCompatActivity {
     }
 
     String EducationStatusSt = "";
+    boolean isEducation = false;
     public void ChooseEducation(View view){
 
-        if (!isBirthDate||MName.getText().toString().isEmpty()|| ShowBirthDate.getText().toString().equals(getString(R.string.no_date_selected))){
-            ST.FillAboveInput(EditActivity.this);
-            return;
-        }
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -1075,7 +1435,7 @@ public class EditActivity extends AppCompatActivity {
                 .setPositiveButton(getString(R.string.thik), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MEducation.setText(EducationStatusSt);
+//                        MEducation.setText(EducationStatusSt);
                     }
                 });
 
@@ -1084,7 +1444,7 @@ public class EditActivity extends AppCompatActivity {
 
     ArrayList<String> WorkSt = new ArrayList<>();
     public void ChooseWork(View view){
-        if (MCast.getText().toString().isEmpty()){
+        if (!isEducation){
             ST.FillAboveInput(this);
             return;
         }
@@ -1142,7 +1502,7 @@ public class EditActivity extends AppCompatActivity {
 
     boolean isBirthDate = false;
     public void ChooseDate(View view){
-        if (!(MGender.getCheckedRadioButtonId()==R.id.m_male||MGender.getCheckedRadioButtonId()==R.id.m_female)||MName.getText().toString().isEmpty()){
+        if (!(MGender.getCheckedRadioButtonId()==R.id.m_male||MGender.getCheckedRadioButtonId()==R.id.m_female)||MName.getText().toString().isEmpty()||MCast.getText().toString().isEmpty()){
             ST.FillAboveInput(EditActivity.this);
             return;
         }
@@ -1162,6 +1522,51 @@ public class EditActivity extends AppCompatActivity {
         isDeathDate = ST.DeathDateDialog(this, ShowDeathDate);
     }
 
+    public void MoveToPastPartnerBt(View v){
+        if (
+                MCurrentPartnerName.getText().toString().isEmpty()||
+                        MCurrentPartnerCast.getText().toString().isEmpty()||
+                        MCurrentPartnerVillage.getText().toString().isEmpty()||
+                        !isCurrentMarryDate||MarryDateShow.getText().toString().equals(getString(R.string.date_fomat))
+                )
+        {
+            ST.FillAboveInput(EditActivity.this);
+            return;
+        }
+        if ((isMarriedAfterDivorcedWithPartner||isMarried||isMarriedAfterPartnerDeath)&&CurrentPartnerIdSt.isEmpty()||(!isCurrentPartnerSuggested)){
+            CurrentPartnerIdSt = ST.GenerateId(new Date(),CurrentPartnerNameSt,CurrentPartnerVillageSt);
+        }
+
+
+        ArrayList<SingleChildListItem> ChutiaList = new ArrayList<>();
+        ChutiaList.addAll(ChildList);
+
+
+        SinglePartnerListItem item = new SinglePartnerListItem(
+                CurrentPartnerIdSt,
+                MCurrentPartnerName.getText().toString(),
+                MCurrentPartnerCast.getText().toString(),
+                MCurrentPartnerVillage.getText().toString(),
+                ST.marryDate,
+                ChutiaList
+        );
+        CloudPartnerItem = item;
+        PartnerList.add(item);
+        PartnerAdapter.notifyDataSetChanged();
+        MCurrentPartnerName.setText("");
+        MCurrentPartnerCast.setText("");
+        MCurrentPartnerVillage.setText("");
+        isCurrentMarryDate = false;
+        ChildList.clear();
+        ChildAdapter.notifyDataSetChanged();
+        MarryDateShow.setText(getString(R.string.date_fomat));
+        ST.setListViewHeightBasedOnChildren(MCurrentChildList);
+        ST.setListViewHeightBasedOnPartner(MPastPartnerList);
+        CurrentPartnerIdSt = "";
+        ComeBackPartner = true;
+        isCurrentPartnerSuggested = false;
+        isCurrentPartnerCloud = false;
+    }
 
     AutoCompleteTextView childVillage, childName;
     RadioGroup childGender;
@@ -1178,7 +1583,7 @@ public class EditActivity extends AppCompatActivity {
         ChildNameSt = "";
         ChildVillageSt = "";
 
-        if (!isCurrentMarryDate||MarryDateShow.getText().toString().isEmpty()){
+        if (!isCurrentMarryDate||MarryDateShow.getText().toString().equals(getString(R.string.date_fomat))){
             ST.FillAboveInput(this);
             return;
         }
@@ -1222,6 +1627,38 @@ public class EditActivity extends AppCompatActivity {
                     }
                     else{
                         childName.requestFocus();
+                        ST.ShowProgress(EditActivity.this);
+                        String ChildCast = isMale?MCast.getText().toString():MCurrentPartnerCast.getText().toString();
+                        ST.SuggetionList
+                                .whereEqualTo(ST.VILLAGE,childVillage.getText().toString())
+                                .whereEqualTo(ST.CAST,ChildCast)
+                                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                ChildSuggetionList.clear();
+                                for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
+                                    try{
+                                        ChildSuggetionList.add(new SuggetionItem(
+                                                documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
+                                                documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
+                                                documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
+                                                documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
+                                                documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
+                                                documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
+                                        ));
+                                    }catch (NullPointerException ex){}
+                                }
+                                ChildSuggetionAdapter = new SuggestionAdapter(EditActivity.this,ChildSuggetionList);
+                                childName.setAdapter(ChildSuggetionAdapter);
+                                ST.HideProgress();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                ST.ShowDialog(EditActivity.this,e.toString());
+                                ST.HideProgress();
+                            }
+                        });
                     }
                 }
             }
@@ -1255,84 +1692,57 @@ public class EditActivity extends AppCompatActivity {
                 return false;
             }
         });
-        childVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
-                    ST.ShowProgress(EditActivity.this);
-                    String ChildCast = isMale?MCast.getText().toString():MCurrentPartnerCast.getText().toString();
-                    ST.SuggetionList
-                            .whereEqualTo(ST.VILLAGE,childVillage.getText().toString())
-                            .whereEqualTo(ST.CAST,ChildCast)
-                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            ChildSuggetionList.clear();
-                            for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
-                                try{
-                                    ChildSuggetionList.add(new SuggetionItem(
-                                            documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
-                                            documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
-                                            documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
-                                            documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
-                                    ));
-                                }catch (NullPointerException ex){}
-                            }
-                            ChildSuggetionAdapter = new SuggestionAdapter(EditActivity.this,ChildSuggetionList);
-                            childName.setAdapter(ChildSuggetionAdapter);
-                            ST.HideProgress();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            ST.ShowDialog(EditActivity.this,e.toString());
-                            ST.HideProgress();
-                        }
-                    });
-                }
-            }
-        });
+
         ST.setSnipper(EditActivity.this,childVillage,VillagesL);
         AddChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                ChildNameSt = childName.getText().toString();
-                ChildVillageSt = childVillage.getText().toString();
-                if (ChildNameSt.isEmpty()){
-                    ST.FillInput(EditActivity.this);
-                    return;
-                }
-                if (ChildVillageSt.isEmpty()){
-                    ST.FillInput(EditActivity.this);
-                    return;
-                }
-                if (ChildIdSt.isEmpty()||(!isChildSuggested)){
-                    ChildIdSt = ST.GenerateId(new Date(),ChildNameSt,ChildVillageSt);
-                }
-                boolean isMale;
-                switch (childGender.getCheckedRadioButtonId()){
-                    case R.id.m_child_male:
-                        ChildGenderSt = getString(R.string.purush);
-                        isMale = true;
-                        break;
-                    case R.id.m_child_female:
-                        ChildGenderSt = getString(R.string.mahila);
-                        isMale = false;
-                        break;
-                    default:
-                        ST.FillInput(EditActivity.this);
-                        return;
+                AlertDialog.Builder childBuilder = new AlertDialog.Builder(EditActivity.this);
+                childBuilder.setTitle(getString(R.string.add));
+                childBuilder.setMessage(R.string.cant_change_after_save);
+                childBuilder.setNegativeButton(getString(R.string.ruken),null);
+                childBuilder.setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ChildNameSt = childName.getText().toString();
+                        ChildVillageSt = childVillage.getText().toString();
+                        if (ChildNameSt.isEmpty()){
+                            ST.FillInput(EditActivity.this);
+                            return;
+                        }
+                        if (ChildVillageSt.isEmpty()){
+                            ST.FillInput(EditActivity.this);
+                            return;
+                        }
+                        if (ChildIdSt.isEmpty()||(!isChildSuggested)){
+                            ChildIdSt = ST.GenerateId(new Date(),ChildNameSt,ChildVillageSt);
+                        }
+                        boolean isMale;
+                        switch (childGender.getCheckedRadioButtonId()){
+                            case R.id.m_child_male:
+                                ChildGenderSt = getString(R.string.purush);
+                                isMale = true;
+                                break;
+                            case R.id.m_child_female:
+                                ChildGenderSt = getString(R.string.mahila);
+                                isMale = false;
+                                break;
+                            default:
+                                ST.FillInput(EditActivity.this);
+                                return;
 
-                }
-                SingleChildListItem item = new SingleChildListItem(ChildIdSt,ChildNameSt,ChildVillageSt,isMale);
-                ChildList.add(item);
-                ST.setListViewHeightBasedOnChildren(MCurrentChildList);
-                ChildAdapter.notifyDataSetChanged();
+                        }
+                        SingleChildListItem item = new SingleChildListItem(ChildIdSt,ChildNameSt,ChildVillageSt,isMale);
+                        ChildList.add(item);
+                        ST.setListViewHeightBasedOnChildren(MCurrentChildList);
+                        ChildAdapter.notifyDataSetChanged();
 
-                builder.dismiss();
+                        builder.dismiss();
+                    }
+                });
+                childBuilder.create().show();
+
 
             }
         });
@@ -1359,13 +1769,23 @@ public class EditActivity extends AppCompatActivity {
         PartnerVillageSt = "";
         PartnerCastSt = "";
 
-        if (((MarriageStatus.getCheckedRadioButtonId()==R.id.m_second_married_divorced)
-                ||(MarriageStatus.getCheckedRadioButtonId()==R.id.m_second_married_widow))
-                &&(!isCurrentMarryDate||MarryDateShow.getText().toString().isEmpty())
+//        if (((MarriageStatus.getCheckedRadioButtonId()==R.id.m_second_married_divorced)
+//                ||(MarriageStatus.getCheckedRadioButtonId()==R.id.m_second_married_widow))
+//                &&(!isCurrentMarryDate||MarryDateShow.getText().toString().isEmpty())
+//                ){
+//            ST.FillAboveInput(this);
+//            return;
+//        }
+        if (((MarriageStatusSpinner.getSelectedItem().toString().equals(getString(R.string.married_after_death)))
+                ||(MarriageStatusSpinner.getSelectedItem().toString().equals(getString(R.string.second_married))))
+                &&(!isCurrentMarryDate||MarryDateShow.getText().toString().equals(getString(R.string.date_fomat)))
                 ){
             ST.FillAboveInput(this);
             return;
         }
+
+
+
         isSadiDate = false;
         builder2 = new AlertDialog.Builder(this).create();
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -1401,12 +1821,46 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus){
-                    if (PartnerCast.getText().toString().isEmpty()){
+                    if (PartnerVillage.getText().toString().isEmpty()){
                         ST.FillAboveInput(EditActivity.this);
                         PartnerName.clearFocus();
                     }
                     else{
                         PartnerName.requestFocus();
+
+                        ST.ShowProgress(EditActivity.this);
+                        String ChildCast = PartnerCast.getText().toString();
+                        ST.SuggetionList
+                                .whereEqualTo(ST.VILLAGE,PartnerVillage.getText().toString())
+                                .whereEqualTo(ST.CAST,ChildCast)
+                                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                PartnerSuggetionList.clear();
+                                for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
+                                    try{
+                                        PartnerSuggetionList.add(new SuggetionItem(
+                                                documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
+                                                documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
+                                                documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
+                                                documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
+                                                documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
+                                                documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
+                                        ));
+                                    }catch (NullPointerException ex){}
+                                }
+                                PartnerSuggetionAdapter = new SuggestionAdapter(EditActivity.this,PartnerSuggetionList);
+                                PartnerName.setAdapter(PartnerSuggetionAdapter);
+
+                                ST.HideProgress();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                ST.ShowDialog(EditActivity.this,e.toString());
+                                ST.HideProgress();
+                            }
+                        });
                     }
                 }
             }
@@ -1430,46 +1884,6 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        PartnerVillage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
-                    ST.ShowProgress(EditActivity.this);
-                    String ChildCast = PartnerCast.getText().toString();
-                    ST.SuggetionList
-                            .whereEqualTo(ST.VILLAGE,PartnerVillage.getText().toString())
-                            .whereEqualTo(ST.CAST,ChildCast)
-                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            PartnerSuggetionList.clear();
-                            for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
-                                try{
-                                    PartnerSuggetionList.add(new SuggetionItem(
-                                            documentSnapshot.contains(ST.MEMBER_ID)?documentSnapshot.get(ST.MEMBER_ID).toString():"",
-                                            documentSnapshot.contains(ST.MEMBER_NAME)?documentSnapshot.get(ST.MEMBER_NAME).toString():"",
-                                            documentSnapshot.contains(ST.VILLAGE)?documentSnapshot.get(ST.VILLAGE).toString():"",
-                                            documentSnapshot.contains(ST.CAST)?documentSnapshot.get(ST.CAST).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_KEY)?documentSnapshot.get(ST.FIRST_RELATION_KEY).toString():"",
-                                            documentSnapshot.contains(ST.FIRST_RELATION_VALUE)?documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString():""
-                                    ));
-                                }catch (NullPointerException ex){}
-                            }
-                            PartnerSuggetionAdapter = new SuggestionAdapter(EditActivity.this,PartnerSuggetionList);
-                            PartnerName.setAdapter(PartnerSuggetionAdapter);
-
-                            ST.HideProgress();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            ST.ShowDialog(EditActivity.this,e.toString());
-                            ST.HideProgress();
-                        }
-                    });
-                }
-            }
-        });
 
         PartnerChildAdapter = new SingleChildListAdapter(this,PartnerChildList);
         ChildListInPartner.setAdapter(PartnerChildAdapter);
@@ -1477,45 +1891,59 @@ public class EditActivity extends AppCompatActivity {
         AddPartner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PartnerVillageSt = PartnerVillage.getText().toString();
-                PartnerCastSt = PartnerCast.getText().toString();
-                PartnerNameSt = PartnerName.getText().toString();
 
-                if (PartnerVillageSt.isEmpty()){
-                    ST.FillInput(EditActivity.this);
-                    return;
-                }
-                if (PartnerCastSt.isEmpty()){
-                    ST.FillInput(EditActivity.this);
-                    return;
-                }
-                if (PartnerNameSt.isEmpty()){
-                    ST.FillInput(EditActivity.this);
-                    return;
-                }
+                AlertDialog.Builder partnerBuilder = new AlertDialog.Builder(EditActivity.this);
+                partnerBuilder.setTitle(getString(R.string.add));
+                partnerBuilder.setMessage(R.string.cant_change_after_save);
+                partnerBuilder.setNegativeButton(getString(R.string.ruken),null);
+                partnerBuilder.setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        PartnerVillageSt = PartnerVillage.getText().toString();
+                        PartnerCastSt = PartnerCast.getText().toString();
+                        PartnerNameSt = PartnerName.getText().toString();
 
-                if (!isSadiDate||DialogDate.getText().toString().equals(getString(R.string.no_date_selected)))
-                    return;
+                        if (PartnerVillageSt.isEmpty()){
+                            ST.FillInput(EditActivity.this);
+                            return;
+                        }
+                        if (PartnerCastSt.isEmpty()){
+                            ST.FillInput(EditActivity.this);
+                            return;
+                        }
+                        if (PartnerNameSt.isEmpty()){
+                            ST.FillInput(EditActivity.this);
+                            return;
+                        }
 
-                if (PartnerIdSt.isEmpty()||(!isPartnerSuggested)){
-                    PartnerIdSt = ST.GenerateId(new Date(),PartnerNameSt,PartnerVillageSt);
-                }
-                SinglePartnerListItem item = new SinglePartnerListItem(
-                        PartnerIdSt,
-                        PartnerNameSt,
-                        PartnerCastSt,
-                        PartnerVillageSt,
-                        ST.staticDate,
-                        PartnerChildList
+                        if (!isSadiDate||DialogDate.getText().toString().equals(getString(R.string.no_date_selected)))
+                            return;
 
-                );
+                        if (PartnerIdSt.isEmpty()||(!isPartnerSuggested)){
+                            PartnerIdSt = ST.GenerateId(new Date(),PartnerNameSt,PartnerVillageSt);
+                        }
+                        SinglePartnerListItem item = new SinglePartnerListItem(
+                                PartnerIdSt,
+                                PartnerNameSt,
+                                PartnerCastSt,
+                                PartnerVillageSt,
+                                ST.staticDate,
+                                PartnerChildList
+
+                        );
 
 
-                PartnerList.add(item);
-                ST.setListViewHeightBasedOnPartner(MPastPartnerList);
-                PartnerAdapter.notifyDataSetChanged();
+                        PartnerList.add(item);
+                        ST.setListViewHeightBasedOnPartner(MPastPartnerList);
+                        PartnerAdapter.notifyDataSetChanged();
 
-                builder2.dismiss();
+                        builder2.dismiss();
+                    }
+                });
+
+                partnerBuilder.create().show();
+
+
             }
         });
         final AutoCompleteTextView[] childVillage2 = new AutoCompleteTextView[1];
@@ -1527,6 +1955,7 @@ public class EditActivity extends AppCompatActivity {
         AddChildPartner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 ChildIdSt = "";
                 ChildNameSt = "";
                 ChildVillageSt = "";
@@ -1574,6 +2003,39 @@ public class EditActivity extends AppCompatActivity {
                             }
                             else{
                                 childName2[0].requestFocus();
+
+                                ST.ShowProgress(EditActivity.this);
+                                String ChildCast = isMale?MCast.getText().toString():MCurrentPartnerCast.getText().toString();
+                                ST.SuggetionList
+                                        .whereEqualTo(ST.VILLAGE,childVillage2[0].getText().toString())
+                                        .whereEqualTo(ST.CAST,ChildCast)
+                                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        ChildSuggetionList.clear();
+                                        for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
+                                            try{
+                                                ChildSuggetionList.add(new SuggetionItem(
+                                                        documentSnapshot.get(ST.MEMBER_ID).toString(),
+                                                        documentSnapshot.get(ST.MEMBER_NAME).toString(),
+                                                        documentSnapshot.get(ST.VILLAGE).toString(),
+                                                        documentSnapshot.get(ST.CAST).toString(),
+                                                        documentSnapshot.get(ST.FIRST_RELATION_KEY).toString(),
+                                                        documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString()
+                                                ));
+                                            }catch (NullPointerException ex){}
+                                        }
+                                        ChildSuggetionAdapter = new SuggestionAdapter(EditActivity.this,ChildSuggetionList);
+                                        childName2[0].setAdapter(ChildSuggetionAdapter);
+                                        ST.HideProgress();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        ST.ShowDialog(EditActivity.this,e.toString());
+                                        ST.HideProgress();
+                                    }
+                                });
                             }
                         }
                     }
@@ -1607,85 +2069,59 @@ public class EditActivity extends AppCompatActivity {
                     }
                 });
 
-                childVillage2[0].setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (!hasFocus){
-                            ST.ShowProgress(EditActivity.this);
-                            String ChildCast = isMale?MCast.getText().toString():MCurrentPartnerCast.getText().toString();
-                            ST.SuggetionList
-                                    .whereEqualTo(ST.VILLAGE,childVillage2[0].getText().toString())
-                                    .whereEqualTo(ST.CAST,ChildCast)
-                                    .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                @Override
-                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                    ChildSuggetionList.clear();
-                                    for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots){
-                                        try{
-                                            ChildSuggetionList.add(new SuggetionItem(
-                                                    documentSnapshot.get(ST.MEMBER_ID).toString(),
-                                                    documentSnapshot.get(ST.MEMBER_NAME).toString(),
-                                                    documentSnapshot.get(ST.VILLAGE).toString(),
-                                                    documentSnapshot.get(ST.CAST).toString(),
-                                                    documentSnapshot.get(ST.FIRST_RELATION_KEY).toString(),
-                                                    documentSnapshot.get(ST.FIRST_RELATION_VALUE).toString()
-                                            ));
-                                        }catch (NullPointerException ex){}
-                                    }
-                                    ChildSuggetionAdapter = new SuggestionAdapter(EditActivity.this,ChildSuggetionList);
-                                    childName2[0].setAdapter(ChildSuggetionAdapter);
-                                    ST.HideProgress();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    ST.ShowDialog(EditActivity.this,e.toString());
-                                    ST.HideProgress();
-                                }
-                            });
-                        }
-                    }
-                });
 
                 ST.setSnipper(EditActivity.this,childVillage2[0],VillagesL);
                 AddChild2[0].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ChildNameSt = childName2[0].getText().toString();
-                        ChildVillageSt = childVillage2[0].getText().toString();
-                        if (childName2[0].getText().toString().isEmpty()){
-                            ST.FillInput(EditActivity.this);
-                            return;
-                        }
-                        if (childVillage2[0].getText().toString().isEmpty()){
-                            ST.FillInput(EditActivity.this);
-                            return;
-                        }
-                        if (ChildIdSt.isEmpty()||(!isChildSuggested)){
-                            ChildIdSt = ST.GenerateId(new Date(),ChildNameSt,ChildVillageSt);
-                        }
-                        boolean isMale;
-                        switch (childGender2[0].getCheckedRadioButtonId()){
-                            case R.id.m_child_male:
-                                ChildGenderSt = getString(R.string.purush);
-                                isMale = true;
-                                break;
-                            case R.id.m_child_female:
-                                ChildGenderSt = getString(R.string.mahila);
-                                isMale = false;
-                                break;
-                            default:
-                                ST.FillInput(EditActivity.this);
-                                return;
+
+                        AlertDialog.Builder childBuilder = new AlertDialog.Builder(EditActivity.this);
+                        childBuilder.setTitle(getString(R.string.add));
+                        childBuilder.setMessage(R.string.cant_change_after_save);
+                        childBuilder.setNegativeButton(getString(R.string.ruken),null);
+                        childBuilder.setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ChildNameSt = childName2[0].getText().toString();
+                                ChildVillageSt = childVillage2[0].getText().toString();
+                                if (childName2[0].getText().toString().isEmpty()){
+                                    ST.FillInput(EditActivity.this);
+                                    return;
+                                }
+                                if (childVillage2[0].getText().toString().isEmpty()){
+                                    ST.FillInput(EditActivity.this);
+                                    return;
+                                }
+                                if (ChildIdSt.isEmpty()||(!isChildSuggested)){
+                                    ChildIdSt = ST.GenerateId(new Date(),ChildNameSt,ChildVillageSt);
+                                }
+                                boolean isMale;
+                                switch (childGender2[0].getCheckedRadioButtonId()){
+                                    case R.id.m_child_male:
+                                        ChildGenderSt = getString(R.string.purush);
+                                        isMale = true;
+                                        break;
+                                    case R.id.m_child_female:
+                                        ChildGenderSt = getString(R.string.mahila);
+                                        isMale = false;
+                                        break;
+                                    default:
+                                        ST.FillInput(EditActivity.this);
+                                        return;
 
 
-                        }
-                        SingleChildListItem item = new SingleChildListItem(ChildIdSt,ChildNameSt,ChildVillageSt,isMale);
-                        PartnerChildList.add(item);
-                        ST.setListViewHeightBasedOnChildren(ChildListInPartner);
-                        PartnerChildAdapter.notifyDataSetChanged();
+                                }
+                                SingleChildListItem item = new SingleChildListItem(ChildIdSt,ChildNameSt,ChildVillageSt,isMale);
+                                PartnerChildList.add(item);
+                                ST.setListViewHeightBasedOnChildren(ChildListInPartner);
+                                PartnerChildAdapter.notifyDataSetChanged();
 
-                        builder3[0].dismiss();
+                                builder3[0].dismiss();
+
+                            }
+                        });
+                        childBuilder.create().show();
+
 
                     }
                 });
@@ -1725,6 +2161,7 @@ public class EditActivity extends AppCompatActivity {
             isWidow = false,
             isMarriedAfterPartnerDeath = false,
             isMarriedAfterDivorcedWithPartner = false;
+    int intialPositionMarriageStatus = 0;
 
 
     boolean isCamera = false;
@@ -1801,7 +2238,8 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    public void SaveBt(View view){
+
+    public void saveNow(){
         MStateSt = MState.getText().toString();
         MCastSt = MCast.getText().toString();
 
@@ -1819,16 +2257,6 @@ public class EditActivity extends AppCompatActivity {
         CurrentPartnerVillageSt = MCurrentPartnerVillage.getText().toString();
         CurrentPartnerNameSt = MCurrentPartnerName.getText().toString();
         CurrentPartnerCastSt = MCurrentPartnerCast.getText().toString();
-
-        if (MotherNameSt.isEmpty()){
-            ST.FillInput(this);
-            return;
-        }
-        if ((isMarried||isMarriedAfterDivorcedWithPartner||isMarriedAfterPartnerDeath)&&
-                (CurrentPartnerNameSt.isEmpty()||CurrentPartnerVillageSt.isEmpty()||CurrentPartnerCastSt.isEmpty())){
-            ST.FillInput(this);
-            return;
-        }
 
         int lifeId = MLife.getCheckedRadioButtonId();
         switch (lifeId){
@@ -1855,24 +2283,25 @@ public class EditActivity extends AppCompatActivity {
                 return;
         }
 
-        int MarriageSId = MarriageStatus.getCheckedRadioButtonId();
-        switch (MarriageSId){
-            case R.id.m_single:
+//        int MarriageSId = MarriageStatus.getCheckedRadioButtonId();
+        int MarriagePosition = MarriageStatusSpinner.getSelectedItemPosition();
+        switch (MarriagePosition){
+            case 0:
                 isSingle = true;
                 break;
-            case R.id.m_married:
+            case 1:
                 isMarried = true;
                 break;
-            case R.id.m_divorced:
+            case 2:
                 isDivorced = true;
                 break;
-            case R.id.m_widow:
+            case 3:
                 isWidow = true;
                 break;
-            case R.id.m_second_married_widow:
+            case 4:
                 isMarriedAfterPartnerDeath = true;
                 break;
-            case R.id.m_second_married_divorced:
+            case 5:
                 isMarriedAfterDivorcedWithPartner = true;
                 break;
 
@@ -1880,6 +2309,105 @@ public class EditActivity extends AppCompatActivity {
                 ST.FillInput(this);
                 return;
         }
+
+        if (
+                MemberNameSt.isEmpty()||
+                        MCastSt.isEmpty()||
+                        !isBirthDate||
+                        ShowBirthDate.getText().toString().equals(getString(R.string.date_fomat))||
+                        FatherVillageSt.isEmpty()||
+                        FatherNameSt.isEmpty()||
+                        MotherCastSt.isEmpty()||
+                        MotherVillageSt.isEmpty()||
+                        MotherNameSt.isEmpty()||
+                        MStateSt.isEmpty()||
+                        MDistrictSt.isEmpty()||
+                        MTahsilSt.isEmpty()||
+                        MVillageSt.isEmpty()||
+                        PrimaryMobileSt.isEmpty()||
+                        WorkSt.isEmpty()
+                ){
+            ST.FillInput(this);
+            return;
+        }
+        if ((isDivorced||isWidow||isMarriedAfterDivorcedWithPartner||isMarriedAfterPartnerDeath)&&
+                PartnerList.size()==0){
+            ST.ShowDialog(this,getString(R.string.please_add_past_partner));
+            return;
+        }
+
+
+        if (MotherNameSt.isEmpty()){
+            ST.FillInput(this);
+            return;
+        }
+        if ((isMarried||isMarriedAfterDivorcedWithPartner||isMarriedAfterPartnerDeath)&&
+                (CurrentPartnerNameSt.isEmpty()||CurrentPartnerVillageSt.isEmpty()||CurrentPartnerCastSt.isEmpty()||!isCurrentMarryDate||MarryDateShow.getText().toString().equals(getString(R.string.date_fomat)))){
+            ST.FillInput(this);
+            return;
+        }
+
+        if (isSingle||isDivorced||isWidow){
+            if (!MCurrentPartnerVillage.getText().toString().isEmpty()||
+                    !MCurrentPartnerName.getText().toString().isEmpty()||
+                    !MCurrentPartnerCast.getText().toString().isEmpty()){
+                ST.ShowDialog(EditActivity.this,getString(R.string.please_add_to_past));
+                return;
+            }
+            CurrentPartnerIdSt = "";
+            CurrentPartnerNameSt = "";
+            CurrentPartnerCastSt = "";
+            CurrentPartnerVillageSt = "";
+            ChildList.clear();
+        }
+
+        for (int f = 0; f < PartnerList.size(); f++){
+            if (PartnerList.get(f).getPartnerId().equals(CurrentPartnerIdSt)){
+                ST.ShowDialog(EditActivity.this,CurrentPartnerNameSt+getString(R.string.partner_more_then_one));
+                return;
+            }
+            for (int u = 0; u < PartnerList.size(); u++){
+                if (PartnerList.get(f).getPartnerId().equals(PartnerList.get(u).getPartnerId())){
+                    ST.ShowDialog(EditActivity.this,PartnerList.get(u).getPartnerName()+getString(R.string.partner_more_then_one));
+                    return;
+                }
+            }
+        }
+
+        for (int f = 0; f < ChildList.size(); f++){
+            for (int u = 0; u < ChildList.size(); u++){
+                if (ChildList.get(f).getId().equals(ChildList.get(u).getId())){
+                    ST.ShowDialog(EditActivity.this,ChildList.get(u).getChildName()+getString(R.string.child_more_then_one));
+                    return;
+                }
+            }
+        }
+
+
+//        switch (MarriageSId){
+//            case R.id.m_single:
+//                isSingle = true;
+//                break;
+//            case R.id.m_married:
+//                isMarried = true;
+//                break;
+//            case R.id.m_divorced:
+//                isDivorced = true;
+//                break;
+//            case R.id.m_widow:
+//                isWidow = true;
+//                break;
+//            case R.id.m_second_married_widow:
+//                isMarriedAfterPartnerDeath = true;
+//                break;
+//            case R.id.m_second_married_divorced:
+//                isMarriedAfterDivorcedWithPartner = true;
+//                break;
+//
+//            default:
+//                ST.FillInput(this);
+//                return;
+//        }
 
         if (FatherIdSt.isEmpty()||(!isFatherSuggested)){
             FatherIdSt = ST.GenerateId(new Date(),FatherNameSt,FatherVillageSt);
@@ -1949,7 +2477,7 @@ public class EditActivity extends AppCompatActivity {
         MemberCompleteDataMap.put(ST.DOB,ST.birthDate);
         MemberCompleteDataMap.put(ST.IS_ALIVE,isAlive);
         if (!isAlive)
-        MemberCompleteDataMap.put(ST.DOD,ST.deathDate);
+            MemberCompleteDataMap.put(ST.DOD,ST.deathDate);
         MemberCompleteDataMap.put(ST.STATE,MStateSt);
         MemberCompleteDataMap.put(ST.DISTRICT,MDistrictSt);
         MemberCompleteDataMap.put(ST.TAHSIL,MTahsilSt);
@@ -1972,33 +2500,33 @@ public class EditActivity extends AppCompatActivity {
         MemberCompleteDataMap.put(ST.IS_MARRIED_AFTER_PARTNER_DEATH,isMarriedAfterPartnerDeath);
         MemberCompleteDataMap.put(ST.IS_MARRIED_AFTER_DIVORCED_WITH_PARTNER,isMarriedAfterDivorcedWithPartner);
         if ((isMarriedAfterDivorcedWithPartner||isMarried||isMarriedAfterPartnerDeath)){
-            MemberCompleteDataMap.put(ST.CURRENT_PARTNER_VILLAGE,CurrentPartnerVillageSt);
-            MemberCompleteDataMap.put(ST.CURRENT_PARTNER_CAST,CurrentPartnerCastSt);
-            MemberCompleteDataMap.put(ST.CURRENT_PARTNER_NAME,CurrentPartnerNameSt);
-            MemberCompleteDataMap.put(ST.CURRENT_PARTNER_ID,CurrentPartnerIdSt);
-            ArrayList<Map<String,Object>> ChildListParents = new ArrayList<>();
-            for (int q = 0; q < ChildList.size(); q++){
-                for (int w = 0; w < ChildList.size(); w++){
-                    if ((q!=w)){
-                        if (ChildList.get(q).getId().equals(ChildList.get(w).getId())){
-                            ChildList.remove(w);
-                            return;
-                        }
+            MemberCompleteDataMap.put(ST.CURRENT_PARTNER_MARRIAGE_DATE,ST.marryDate);
+        }
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_VILLAGE,CurrentPartnerVillageSt);
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_CAST,CurrentPartnerCastSt);
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_NAME,CurrentPartnerNameSt);
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_ID,CurrentPartnerIdSt);
+        ArrayList<Map<String,Object>> ChildListParents = new ArrayList<>();
+        for (int q = 0; q < ChildList.size(); q++){
+            for (int w = 0; w < ChildList.size(); w++){
+                if ((q!=w)){
+                    if (ChildList.get(q).getId().equals(ChildList.get(w).getId())){
+                        ChildList.remove(w);
+                        return;
                     }
                 }
             }
-            for (int h = 0; h < ChildList.size(); h++){
-                Map<String, Object> ChildMap = new HashMap<>();
-                ChildMap.put(ST.CHILD_ID,ChildList.get(h).getId());
-                ChildMap.put(ST.CHILD_NAME,ChildList.get(h).getChildName());
-                ChildMap.put(ST.CHILD_VILLAGE,ChildList.get(h).getChildVillage());
-                ChildMap.put(ST.CHILD_IS_MALE,ChildList.get(h).isMale());
-                ChildListParents.add(ChildMap);
-            }
-
-            MemberCompleteDataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildListParents);
-            MemberCompleteDataMap.put(ST.CURRENT_PARTNER_MARRIAGE_DATE,ST.marryDate);
         }
+        for (int h = 0; h < ChildList.size(); h++){
+            Map<String, Object> ChildMap = new HashMap<>();
+            ChildMap.put(ST.CHILD_ID,ChildList.get(h).getId());
+            ChildMap.put(ST.CHILD_NAME,ChildList.get(h).getChildName());
+            ChildMap.put(ST.CHILD_VILLAGE,ChildList.get(h).getChildVillage());
+            ChildMap.put(ST.CHILD_IS_MALE,ChildList.get(h).isMale());
+            ChildListParents.add(ChildMap);
+        }
+
+        MemberCompleteDataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildListParents);
         if (isDivorced||isWidow||isMarriedAfterDivorcedWithPartner||isMarriedAfterPartnerDeath){
             ArrayList<Map<String,Object>> PastListPartner = new ArrayList<>();
             for (int k = 0; k < PartnerList.size(); k++){
@@ -2059,7 +2587,7 @@ SearchData
 
         ST.SearchDataSingle(Mid).update(SearchMap);
 
-        ST.MyMemberSingle(Mid).update(SearchMap);
+        ST.MyMemberSingle(Mid).set(SearchMap);
 
         Map<String,Object> SuggationMap = new HashMap<>();
         SuggationMap.put(ST.MEMBER_ID,Mid);
@@ -2075,6 +2603,63 @@ SearchData
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()){
 
+                    if (documentSnapshot.contains(ST.CURRENT_PARTNER_CHILD_LIST)){
+
+                        ArrayList<Map<String,Object>> ChildListParents = (ArrayList<Map<String, Object>>) documentSnapshot.get(ST.CURRENT_PARTNER_CHILD_LIST);
+
+                        for (int b = 0; b < ChildListParents.size(); b++){
+                            if (ChildListParents.get(b).get(ST.CHILD_ID).equals(Mid)){
+
+                                Map<String, Object> DataMap = new HashMap<>();
+                                Map<String, Object> ChildMap = new HashMap<>();
+                                ChildMap.put(ST.CHILD_ID,Mid);
+                                ChildMap.put(ST.CHILD_NAME,MemberNameSt);
+                                ChildMap.put(ST.CHILD_VILLAGE,MVillageSt);
+                                ChildMap.put(ST.CHILD_IS_MALE,isMale);
+                                ChildListParents.remove(b);
+                                ChildListParents.add(b,ChildMap);
+                                DataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildListParents);
+                                ST.CompleteDataSingle(FatherIdSt).update(DataMap);
+                                break;
+                            }
+                        }
+                    }
+                    else if (documentSnapshot.contains(ST.PAST_PARTNER_LIST)){
+                        ArrayList<Map<String,Object>> PastListPartner = (ArrayList<Map<String, Object>>) documentSnapshot.get(ST.PAST_PARTNER_LIST);
+
+                        for(int c = 0; c < PastListPartner.size(); c++){
+                            ArrayList<Map<String,Object>> PastChildMapList = (ArrayList<Map<String, Object>>) PastListPartner.get(c).get(ST.PAST_PARTNER_CHILD_LIST);
+
+                            try{
+                                for (int d = 0; d < PastChildMapList.size(); d++){
+                                    if (PastChildMapList.get(d).get(ST.CHILD_ID).equals(Mid)){
+                                        Map<String, Object> DataMap = new HashMap<>();
+                                        Map<String, Object> ChildMap = new HashMap<>();
+                                        ChildMap.put(ST.CHILD_ID,Mid);
+                                        ChildMap.put(ST.CHILD_NAME,MemberNameSt);
+                                        ChildMap.put(ST.CHILD_VILLAGE,MVillageSt);
+                                        ChildMap.put(ST.CHILD_IS_MALE,isMale);
+                                        PastChildMapList.remove(d);
+                                        PastChildMapList.add(d,ChildMap);
+
+                                        Map<String, Object> PartnerMap = new HashMap<>();
+                                        PartnerMap.put(ST.PAST_PARTNER_ID,PastListPartner.get(c).get(ST.PAST_PARTNER_ID));
+                                        PartnerMap.put(ST.PAST_PARTNER_NAME,PastListPartner.get(c).get(ST.PAST_PARTNER_NAME));
+                                        PartnerMap.put(ST.PAST_PARTNER_CAST,PastListPartner.get(c).get(ST.PAST_PARTNER_CHILD_LIST));
+                                        PartnerMap.put(ST.PAST_PARTNER_VILLAGE,PastListPartner.get(c).get(ST.PAST_PARTNER_VILLAGE));
+                                        PartnerMap.put(ST.PAST_PARTNER_MARRIAGE_DATE,PastListPartner.get(c).get(ST.PAST_PARTNER_MARRIAGE_DATE));
+                                        PartnerMap.put(ST.PAST_PARTNER_CHILD_LIST,PastChildMapList);
+                                        PastListPartner.remove(c);
+                                        PastListPartner.add(c,PartnerMap);
+
+                                        DataMap.put(ST.PAST_PARTNER_LIST,PastListPartner);
+                                        ST.CompleteDataSingle(FatherIdSt).update(DataMap);
+                                        break;
+                                    }
+                                }
+                            }catch (Exception e){}
+                        }
+                    }
                 }
                 else{
                     String EditingKey = String.valueOf(new Random().nextInt(900000)+100000);
@@ -2096,6 +2681,7 @@ SearchData
                     DataMap.put(ST.CURRENT_PARTNER_NAME,MotherNameSt);
                     DataMap.put(ST.CURRENT_PARTNER_VILLAGE, MotherVillageSt);
                     DataMap.put(ST.CURRENT_PARTNER_CAST,MotherCastSt);
+                    DataMap.put(ST.IS_VERIFIED,false);
                     ArrayList<Map<String,Object>> ChildListParents = new ArrayList<>();
                     Map<String, Object> ChildMap = new HashMap<>();
                     ChildMap.put(ST.CHILD_ID,Mid);
@@ -2142,12 +2728,67 @@ SearchData
                 }
             }
         });
-        
+
         ST.CompleteDataSingle(MotherIdSt).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()){
-                    
+                    if (documentSnapshot.contains(ST.CURRENT_PARTNER_CHILD_LIST)){
+
+                        ArrayList<Map<String,Object>> ChildListParents = (ArrayList<Map<String, Object>>) documentSnapshot.get(ST.CURRENT_PARTNER_CHILD_LIST);
+
+                        for (int b = 0; b < ChildListParents.size(); b++){
+                            if (ChildListParents.get(b).get(ST.CHILD_ID).equals(Mid)){
+
+                                Map<String, Object> DataMap = new HashMap<>();
+                                Map<String, Object> ChildMap = new HashMap<>();
+                                ChildMap.put(ST.CHILD_ID,Mid);
+                                ChildMap.put(ST.CHILD_NAME,MemberNameSt);
+                                ChildMap.put(ST.CHILD_VILLAGE,MVillageSt);
+                                ChildMap.put(ST.CHILD_IS_MALE,isMale);
+                                ChildListParents.remove(b);
+                                ChildListParents.add(b,ChildMap);
+                                DataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildListParents);
+                                ST.CompleteDataSingle(MotherIdSt).update(DataMap);
+                                break;
+                            }
+                        }
+                    }
+                    else if (documentSnapshot.contains(ST.PAST_PARTNER_LIST)) {
+                        ArrayList<Map<String, Object>> PastListPartner = (ArrayList<Map<String, Object>>) documentSnapshot.get(ST.PAST_PARTNER_LIST);
+
+                        for (int c = 0; c < PastListPartner.size(); c++) {
+                            try{
+                                ArrayList<Map<String, Object>> PastChildMapList = (ArrayList<Map<String, Object>>) PastListPartner.get(c).get(ST.PAST_PARTNER_CHILD_LIST);
+
+                                for (int d = 0; d < PastChildMapList.size(); d++) {
+                                    if (PastChildMapList.get(d).get(ST.CHILD_ID).equals(Mid)) {
+                                        Map<String, Object> DataMap = new HashMap<>();
+                                        Map<String, Object> ChildMap = new HashMap<>();
+                                        ChildMap.put(ST.CHILD_ID, Mid);
+                                        ChildMap.put(ST.CHILD_NAME, MemberNameSt);
+                                        ChildMap.put(ST.CHILD_VILLAGE, MVillageSt);
+                                        ChildMap.put(ST.CHILD_IS_MALE, isMale);
+                                        PastChildMapList.remove(d);
+                                        PastChildMapList.add(d, ChildMap);
+
+                                        Map<String, Object> PartnerMap = new HashMap<>();
+                                        PartnerMap.put(ST.PAST_PARTNER_ID,PastListPartner.get(c).get(ST.PAST_PARTNER_ID));
+                                        PartnerMap.put(ST.PAST_PARTNER_NAME,PastListPartner.get(c).get(ST.PAST_PARTNER_NAME));
+                                        PartnerMap.put(ST.PAST_PARTNER_CAST,PastListPartner.get(c).get(ST.PAST_PARTNER_CHILD_LIST));
+                                        PartnerMap.put(ST.PAST_PARTNER_VILLAGE,PastListPartner.get(c).get(ST.PAST_PARTNER_VILLAGE));
+                                        PartnerMap.put(ST.PAST_PARTNER_MARRIAGE_DATE,PastListPartner.get(c).get(ST.PAST_PARTNER_MARRIAGE_DATE));
+                                        PartnerMap.put(ST.PAST_PARTNER_CHILD_LIST, PastChildMapList);
+                                        PastListPartner.remove(c);
+                                        PastListPartner.add(c, PartnerMap);
+
+                                        DataMap.put(ST.PAST_PARTNER_LIST, PastListPartner);
+                                        ST.CompleteDataSingle(MotherIdSt).update(DataMap);
+                                    }
+                                }
+                            }catch (Exception e){}
+                        }
+                    }
                 }
                 else{
                     String EditingKey = String.valueOf(new Random().nextInt(900000)+100000);
@@ -2308,14 +2949,14 @@ SearchData
                 }
             });
         }
-        
+
         for (int z = 0; z < ChildList.size(); z++){
-            
+
             final String finalChildId = ChildList.get(z).getId();
             final String finalChildName = ChildList.get(z).getChildName();
             final String finalChildVillage = ChildList.get(z).getChildVillage();
             final boolean finalIsChildMale = ChildList.get(z).isMale();
-            
+
             String ChildCast;
             if (isMale){
                 ChildCast = MCastSt;
@@ -2323,12 +2964,12 @@ SearchData
                 ChildCast = CurrentPartnerCastSt;
             }
             final String finalChildCast = ChildCast;
-            
+
             ST.CompleteDataSingle(ChildList.get(z).getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()){
-                        
+
                     }
                     else{
                         String EditingKey = String.valueOf(new Random().nextInt(900000)+100000);
@@ -2363,7 +3004,7 @@ SearchData
                             DataMap.put(ST.MOTHER_NAME,MemberNameSt);
                             DataMap.put(ST.MOTHER_CAST,MCastSt);
                             DataMap.put(ST.MOTHER_ID,Mid);
-                        }                        
+                        }
                         DataMap.put(ST.FIRST_RELATION_ID,Mid);
                         DataMap.put(ST.FIRST_RELATION_KEY,isMale?getString(R.string.pita_ka_naam):getString(R.string.mata_ka_naam));
                         DataMap.put(ST.FIRST_RELATION_VALUE,MemberNameSt);
@@ -2448,7 +3089,7 @@ SearchData
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()){
-                        
+
                     }
                     else{
                         String EditingKey = String.valueOf(new Random().nextInt(900000)+100000);
@@ -2502,7 +3143,7 @@ SearchData
                 }
             });
             for (int y = 0; y < PartnerChildList.size(); y++){
-                
+
                 final String finalChildId = PartnerChildList.get(y).getId();
                 final String finalChildName = PartnerChildList.get(y).getChildName();
                 final String finalChildVillage = PartnerChildList.get(y).getChildVillage();
@@ -2592,20 +3233,75 @@ SearchData
             }
         }
 
+        ST.ShowProgress(EditActivity.this);
 
-        AlertDialog.Builder bbl = new AlertDialog.Builder(this);
-        bbl.setTitle(getString(R.string.saved));
-        bbl.setPositiveButton(getString(R.string.thik), new DialogInterface.OnClickListener() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ST.HideProgress();
+                        AlertDialog.Builder bbl = new AlertDialog.Builder(EditActivity.this);
+                        bbl.setTitle(getString(R.string.saved));
+                        bbl.setPositiveButton(getString(R.string.thik), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditActivity.this.finish();
+                            }
+                        });
+                        bbl.create().show();
+                    }
+                });
+            }
+        });
+        thread.start();
+
+
+
+    }
+    public void SaveBt(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getString(R.string.save));
+        builder.setMessage(getString(R.string.you_cant_change));
+        builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveNow();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.ruken), null);
+
+        builder.create().show();
+    }
+
+    public void CancelBt(View view){
+        ExitMethod();
+    }
+
+    public void ExitMethod(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.cancel));
+        builder.setTitle(getString(R.string.this_will_not_saved));
+        builder.setNegativeButton(getString(R.string.no_saved), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 EditActivity.this.finish();
             }
         });
-        bbl.create().show();
+        builder.setPositiveButton(getString(R.string.ruken),null);
+        builder.create().show();
     }
 
-    public void CancelBt(View view){
-        this.finish();
+    @Override
+    public void onBackPressed() {
+        ExitMethod();
     }
 
     OnFailureListener FailurListener = new OnFailureListener() {
@@ -2659,4 +3355,9 @@ SearchData
                 result1 == PackageManager.PERMISSION_GRANTED;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
 }

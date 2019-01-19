@@ -2,6 +2,7 @@ package com.sanshy.dhanawanshi.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -162,7 +163,7 @@ public class ViewSingle extends AppCompatActivity {
     String MStateSt;
     String MCastSt;
 
-    String PhotoURLSt,MemberNameSt,MDistrictSt,MTahsilSt,MVillageSt,PrimaryMobileSt,SecondaryMobileSt;
+    String PhotoURLSt,MemberNameSt,MDistrictSt,MTahsilSt,MVillageSt,PrimaryMobileSt = "",SecondaryMobileSt = "";
     String FatherVillageSt,FatherNameSt,FatherIdSt, MotherVillageSt,MotherCastSt,MotherNameSt,MotherIdSt;
     String CurrentPartnerVillageSt,CurrentPartnerNameSt,CurrentPartnerCastSt,CurrentPartnerIdSt;
     String FirstRelationKey,FirstRelationValue,FirstRelationId;
@@ -225,6 +226,7 @@ public class ViewSingle extends AppCompatActivity {
         if (documentSnapshot.contains(ST.IS_MALE)){
             isMale = (boolean) documentSnapshot.get(ST.IS_MALE);
             Gender.setText(isMale?getString(R.string.purush):getString(R.string.mahila));
+
         }
         if (documentSnapshot.contains(ST.DOB)){
             BirthDate = (Date) documentSnapshot.get(ST.DOB);
@@ -269,10 +271,17 @@ public class ViewSingle extends AppCompatActivity {
         if (documentSnapshot.contains(ST.PRIMARY_MOBILE_NO)){
             PrimaryMobileSt = (String) documentSnapshot.get(ST.PRIMARY_MOBILE_NO);
             Mobile.setText(PrimaryMobileSt);
+            if (!isMale&&!PrimaryMobileSt.isEmpty()){
+                Mobile.setText("*******"+PrimaryMobileSt.substring(7));
+            }
         }
         if (documentSnapshot.contains(ST.SECONDARY_MOBILE_NO)){
             SecondaryMobileSt = (String) documentSnapshot.get(ST.SECONDARY_MOBILE_NO);
-            Mobile.setText(Mobile.getText().toString()+"\n"+SecondaryMobileSt);
+            if (!isMale&&!SecondaryMobileSt.isEmpty()){
+                Mobile.setText(Mobile.getText().toString()+"\n *******"+SecondaryMobileSt.substring(7));
+            }else{
+                Mobile.setText(Mobile.getText().toString()+"\n"+SecondaryMobileSt);
+            }
         }
         if (documentSnapshot.contains(ST.CAST)){
             MCastSt = (String) documentSnapshot.get(ST.CAST);
@@ -502,6 +511,13 @@ public class ViewSingle extends AppCompatActivity {
     public void MVillageClick(View view){
         VillageSearchOpen(MotherVillageSt);
     }
+    public void LastEditMobile(View view){
+        PhoneDial(LastEdited.getText().toString());
+    }
+    public void MyMobileDial(View view){
+        if (!PrimaryMobileSt.isEmpty())
+            PhoneDial(PrimaryMobileSt);
+    }
 
     public void PersonViewOpen(String Pid){
         Intent intent = new Intent(ViewSingle.this,ViewSingle.class);
@@ -531,6 +547,11 @@ public class ViewSingle extends AppCompatActivity {
     public void StateSearchOpen(String State){
         Intent intent = new Intent(ViewSingle.this,SimpleListActivity.class);
         intent.putExtra(ST.STATE,State);
+        startActivity(intent);
+    }
+    public void PhoneDial(String Phone){
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:"+Phone));
         startActivity(intent);
     }
 

@@ -50,7 +50,7 @@
                             android:layout_weight="0.8"
                             android:layout_margin="@dimen/child_text_margin"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
                             android:text="@string/bache_ka_ling"/>
                         <TextView
@@ -59,7 +59,7 @@
                             android:layout_weight="1.2"
                             android:layout_margin="@dimen/child_text_margin"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/text_color"
                             android:textSize="@dimen/text_size"
                             android:text="@string/bache_ka_ganv"/>
                     </LinearLayout>

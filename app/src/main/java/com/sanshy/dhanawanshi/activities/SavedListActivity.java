@@ -1,7 +1,9 @@
 package com.sanshy.dhanawanshi.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -50,8 +52,29 @@ public class SavedListActivity extends AppCompatActivity {
                 intent.putExtra(ST.MEMBER_ID,ItemList.get(position).getId());
                 startActivity(intent);
             }
+
+            @Override
+            public void LongPressListener(View v, final int position) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SavedListActivity.this);
+
+                builder.setTitle(getString(R.string.delete));
+                builder.setMessage(getString(R.string.remove_from_saved_list));
+                builder.setPositiveButton(getString(R.string.cancel),null);
+                builder.setNegativeButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ST.SavedSingle(ItemList.get(position).getId()).delete();
+                        ItemList.remove(position);
+                        ListAdapter.notifyDataSetChanged();
+                    }
+                });
+
+                builder.create().show();
+            }
         });
         ListRecyclerView.setAdapter(ListAdapter);
+
+
 
         ListRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -71,6 +94,28 @@ public class SavedListActivity extends AppCompatActivity {
 
 
         SearchDataMethod();
+    }
+
+    public void DeleteAll(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(SavedListActivity.this);
+
+        builder.setTitle(getString(R.string.delete));
+        builder.setMessage(getString(R.string.remove_from_saved_list));
+        builder.setPositiveButton(getString(R.string.cancel),null);
+        builder.setNegativeButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ST.ShowProgress(SavedListActivity.this);
+                for (int i = 0; i < ItemList.size(); i++){
+                    ST.SavedSingle(ItemList.get(i).getId()).delete();
+                }
+                ItemList.clear();
+                ListAdapter.notifyDataSetChanged();
+                ST.HideProgress();
+            }
+        });
+
+        builder.create().show();
     }
 
     private void SearchDataMethod() {
