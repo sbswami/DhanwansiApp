@@ -2862,23 +2862,28 @@ SearchData
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()){
 
-                        Map<String, Object> DataMap = new HashMap<>();
+                        if (documentSnapshot.contains(ST.CURRENT_PARTNER_ID)){
+                            if (documentSnapshot.get(ST.CURRENT_PARTNER_ID).toString().equals(Mid)){
+                                Map<String, Object> DataMap = new HashMap<>();
 
-                        ArrayList<Map<String,Object>> ChildListParents = new ArrayList<>();
-                        for (int h = 0; h < ChildList.size(); h++){
-                            Map<String, Object> ChildMap = new HashMap<>();
-                            ChildMap.put(ST.CHILD_ID,ChildList.get(h).getId());
-                            ChildMap.put(ST.CHILD_NAME,ChildList.get(h).getChildName());
-                            ChildMap.put(ST.CHILD_VILLAGE,ChildList.get(h).getChildVillage());
-                            ChildMap.put(ST.CHILD_IS_MALE,ChildList.get(h).isMale());
-                            ChildListParents.add(ChildMap);
+                                ArrayList<Map<String,Object>> ChildListParents = new ArrayList<>();
+                                for (int h = 0; h < ChildList.size(); h++){
+                                    Map<String, Object> ChildMap = new HashMap<>();
+                                    ChildMap.put(ST.CHILD_ID,ChildList.get(h).getId());
+                                    ChildMap.put(ST.CHILD_NAME,ChildList.get(h).getChildName());
+                                    ChildMap.put(ST.CHILD_VILLAGE,ChildList.get(h).getChildVillage());
+                                    ChildMap.put(ST.CHILD_IS_MALE,ChildList.get(h).isMale());
+                                    ChildListParents.add(ChildMap);
+                                }
+
+                                DataMap.put(ST.CURRENT_PARTNER_NAME,MemberNameSt);
+                                DataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildListParents);
+                                DataMap.put(ST.CURRENT_PARTNER_MARRIAGE_DATE,ST.marryDate);
+
+
+                                ST.CompleteDataSingle(CurrentPartnerIdSt).update(DataMap);
+                            }
                         }
-
-                        DataMap.put(ST.CURRENT_PARTNER_CHILD_LIST,ChildListParents);
-                        DataMap.put(ST.CURRENT_PARTNER_MARRIAGE_DATE,ST.marryDate);
-
-
-                        ST.CompleteDataSingle(CurrentPartnerIdSt).update(DataMap);
                     }
                     else{
                         String EditingKey = String.valueOf(new Random().nextInt(900000)+100000);
@@ -2969,7 +2974,18 @@ SearchData
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()){
-
+                        if (documentSnapshot.contains(ST.FATHER_ID)||documentSnapshot.contains(ST.MOTHER_ID)){
+                            if ((documentSnapshot.get(ST.FATHER_ID).toString().equals(Mid))||documentSnapshot.get(ST.MOTHER_ID).toString().equals(Mid)){
+                                Map<String, Object> DataMap = new HashMap<>();
+                                if (isMale){
+                                    DataMap.put(ST.FATHER_NAME,MemberNameSt);
+                                }
+                                else{
+                                    DataMap.put(ST.MOTHER_NAME,MemberNameSt);
+                                }
+                                ST.CompleteDataSingle(finalChildId).update(DataMap);
+                            }
+                        }
                     }
                     else{
                         String EditingKey = String.valueOf(new Random().nextInt(900000)+100000);

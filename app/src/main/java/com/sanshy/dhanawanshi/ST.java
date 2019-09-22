@@ -100,6 +100,9 @@ public class ST {
     public static final String PAST_PARTNER_MARRIAGE_DATE = "PastPartnerMarriageDate";
     public static final String PAST_PARTNER_CHILD_LIST = "PastPartnerChildList";
     public static final String IS_VERIFIED = "isVerified";
+    public static final String DATE = "Date";
+    public static final String NOTIFICATION_TITLE = "NotificationTitle";
+    public static final String NOTIFICATION_BODY = "NotificationBody";
 
     public static FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     public static String mUid = ST.currentUser!=null?ST.currentUser.getUid():"000";
